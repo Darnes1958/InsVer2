@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Auth;
 
 class main extends Model
 {
-    use HasFactory;
+
   protected $connection = 'other';
-  protected $guarded = [];
+
   protected $table = 'main';
   protected $primaryKey ='no';
   public $incrementing = false;

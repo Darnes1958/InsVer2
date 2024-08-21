@@ -29,6 +29,7 @@ class Contract extends Page implements HasInfolists
 
     #[On('showMe')]
     public function showMe($no){
+        $this->Main=main::find($no);
         $this->no=$no;
         $this->showInfo=true;
     }
