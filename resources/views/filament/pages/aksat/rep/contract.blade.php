@@ -6,10 +6,10 @@
               @livewire(\App\Livewire\Aksat\Rep\MainSearch::class)
           </div>
       </div>
-      <div x-data  x-show="$wire.showInfo" class="w-4/12 mx-3">
+      <div x-data  x-show="$wire.showInfo" class="w-4/12 mx-3 p-0">
           {{ $this->mainInfolist }}
       </div>
-      <div x-data  x-show="$wire.showInfo" class="w-4/12 ">
+      <div x-data  x-show="$wire.showInfo" class="w-4/12 mx-0 p-0">
           @livewire(\App\Livewire\Aksat\Rep\KstTran::class)
       </div>
   </div>

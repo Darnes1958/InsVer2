@@ -16,13 +16,15 @@ use Filament\Tables\Columns\TextColumn;
 
 class MainSearch extends BaseWidget
 {
-  public $mysearch;
+
   public $theKey;
+  public $showSearch = true;
   protected static ?string $heading="";
-  #[On('takeSearch')]
-  public function takeSearch($mysearch,$no){
-    $this->mysearch=$mysearch;
-    $this->theKey=$no;
+
+  public function Do($no)
+  {
+      $this->dispatch('takeNo',no: $no);
+      $this->dispatch('showMe',no: $no);
   }
 
     public function table(Table $table): Table
@@ -31,22 +33,19 @@ class MainSearch extends BaseWidget
 
             ->defaultPaginationPageOption(5)
             ->paginationPageOptions([5,10,50])
-            ->defaultSort('no','desc')
+         //   ->defaultSort('no','desc')
+            ->searchPlaceholder('بحث برقم الحساب او الاسم')
             ->query(function (main $main){
               $main=main::query();
 
 
-
              return $main;
-
             })
 
             ->columns([
               Tables\Columns\TextColumn::make('no')
                   ->action(function (main $record){
-                      $this->theKey=$record->no;
-                      $this->dispatch('takeNo',no: $this->theKey);
-                      $this->dispatch('showMe',no: $this->theKey);
+                      $this->Do($record->no);
                   })
                   ->color('primary')
                   ->size(TextColumnSize::ExtraSmall)
@@ -54,25 +53,38 @@ class MainSearch extends BaseWidget
               TextColumn::make('name')
                   ->searchable()
                   ->action(function (main $record): void{
-
-                          $this->theKey=$record->no;
-                          $this->dispatch('takeNo',no: $this->theKey);
-                          $this->dispatch('showMe',no: $this->theKey);
-                      }
+                      $this->Do($record->no);                      }
                   )
                   ->limit(25)
+                  ->tooltip(function (TextColumn $column): ?string {
+                      $state = $column->getState();
 
+                      if (strlen($state) < 50) {
+                          return null;
+                      }
+
+                      return $state;
+                  })
                   ->size(TextColumnSize::ExtraSmall)
                 ->label('الاسم'),
               TextColumn::make('acc')
                   ->searchable()
+                  ->action(function (main $record){
+                      $this->Do($record->no);
+                  })
                   ->size(TextColumnSize::ExtraSmall)
                   ->color('info')
                 ->label('رقم الحساب'),
               TextColumn::make('sul')
+                  ->action(function (main $record){
+                      $this->Do($record->no);
+                  })
                     ->size(TextColumnSize::ExtraSmall)
                     ->label('الاجمالي'),
               TextColumn::make('kst')
+                  ->action(function (main $record){
+                      $this->Do($record->no);
+                  })
                     ->size(TextColumnSize::ExtraSmall)
                     ->label('القسط'),
             ])

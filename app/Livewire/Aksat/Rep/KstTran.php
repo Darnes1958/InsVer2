@@ -14,8 +14,8 @@ class KstTran extends BaseWidget
 {
     public $no;
     protected static ?string $heading="";
-    #[On('takeNo')]
-    public function takeNo($no){
+    #[On('KstTranNo')]
+    public function KstTranNo($no){
 
         $this->no=$no;
     }
