@@ -23,9 +23,11 @@ class KstTran extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->defaultPaginationPageOption(15)
-            ->paginationPageOptions([5,10,15,50])
-            ->defaultSort('no','desc')
+
+            ->emptyStateHeading('لا توجد بيانات')
+            ->defaultPaginationPageOption(12)
+            ->paginationPageOptions([5,12,15,50])
+            ->defaultSort('ser')
             ->query(function (kst_trans $main){
                 $main=kst_trans::where('no',$this->no);
                 return $main;
@@ -48,6 +50,11 @@ class KstTran extends BaseWidget
                     ->label('ت.الخصم'),
                 Tables\Columns\TextColumn::make('ksm')
                     ->label('الخصم'),
+                Tables\Columns\TextColumn::make('ksm_type')
+                    ->toggleable()
+                    ->label('طريقة الدفع'),
+
+
                 Tables\Columns\TextColumn::make('kst_note')
                     ->toggleable()
                     ->label('ملاحظات'),

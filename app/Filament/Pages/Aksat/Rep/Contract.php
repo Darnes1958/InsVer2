@@ -3,11 +3,15 @@
 namespace App\Filament\Pages\Aksat\Rep;
 
 use App\Models\aksat\main;
+use App\Models\bank\bank;
+use App\Models\bank\BankTajmeehy;
 use App\Models\NewModel\Nmain;
 use App\Models\sell\sells;
 use App\Models\stores\halls_names;
 use App\Models\stores\stores_names;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
@@ -29,26 +33,30 @@ class Contract extends Page implements HasInfolists
     public $infoData;
 
     public $no;
+
+    public $bank;
+    public $Taj;
     public  $Main;
     public $Order_no;
     public $showInfo=false;
-
+    public $By=false;
+    public function mount(): void
+    {
+        $this->Main=Nmain::first();
+        $this->Order_no=sells::find($this->Main->order_no);
+        $this->searchForm->fill(['By'=>$this->By,]);
+    }
     #[On('showMe')]
     public function showMe($no){
         $this->Main=Nmain::find($no);
         $this->Order_no=sells::find($this->Main->order_no);
 
         $this->no=$no;
-        $this->searchForm->fill(['no'=>$no]);
+        $this->searchForm->fill(['no'=>$no,'By'=>$this->By,'bank'=>$this->bank,'Taj'=>$this->Taj]);
         $this->showInfo=true;
     }
 
-  public function mount(): void
-  {
-      $this->Main=Nmain::first();
-      $this->Order_no=sells::find($this->Main->order_no);
-      $this->searchForm->fill([]);
-  }
+
 
   protected function getForms(): array
   {
@@ -67,6 +75,8 @@ class Contract extends Page implements HasInfolists
       if  ($res) {
           $this->Main=$res;
           $this->showInfo=true;
+          $this->dispatch('MainItemOrder',order_no: $this->Main->order_no);
+
       } else $this->showInfo=false;
 
       $this->dispatch('KstTranNo',no: $this->no);
@@ -82,7 +92,7 @@ class Contract extends Page implements HasInfolists
       Section::make()
        ->schema([
          TextInput::make('no')
-          ->label('')
+          ->hiddenLabel()
           ->extraInputAttributes(['style' => 'font-size:.75em;padding:0.5em;'])
           ->placeholder('رقم العقد')
           ->live()
@@ -93,6 +103,42 @@ class Contract extends Page implements HasInfolists
                  }
              })
           ->extraAttributes( ['wire:keydown.enter' => 'chkNo' ]) ,
+         Select::make('bank')
+            ->placeholder('فلترة بالمصرف')
+            ->visible(function (){
+                return !$this->By;
+            })
+            ->searchable()
+            ->live()
+               ->hiddenLabel()
+            ->options(bank::all()->pluck('bank_name','bank_no'))
+           ->afterStateUpdated(function ($state){
+               $this->bank=$state;
+               $this->dispatch('takeBank',bank: $state,by: $this->By) ;
+           })
+           ->columnSpan(2),
+           Select::make('Taj')
+               ->placeholder('فلترة بالتجميعي')
+               ->visible(function (){
+                   return $this->By;
+               })
+               ->searchable()
+               ->live()
+               ->hiddenLabel()
+               ->options(BankTajmeehy::all()->pluck('TajName','TajNo'))
+               ->afterStateUpdated(function ($state){
+                   $this->Taj=$state;
+                   $this->dispatch('takeBank',bank: $state,by: $this->By) ;
+               })
+               ->columnSpan(2),
+        Checkbox::make('By')
+         ->label('بالتجميعي')
+         ->live()
+         ->afterStateUpdated(function ($state){
+             $this->bank=null;
+             $this->Taj=null;
+             $this->By=$state;
+         })
 
        ])->columns(4)
 
@@ -141,7 +187,7 @@ class Contract extends Page implements HasInfolists
                     ->columnSpan(3),
                 TextEntry::make('sul_date')
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="text-white "> تاريخ العقد&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-white "> ت.العقد&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
 
                     ->columnSpan(2),
@@ -160,7 +206,7 @@ class Contract extends Page implements HasInfolists
                     ->columnSpan(2),
                 TextEntry::make('sul')
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="text-white "> اجمالي التقسيط&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-white "> ج.التقسيط&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('sul_pay')

@@ -1,16 +1,20 @@
 <x-filament-panels::page>
-  <div class="flex w-full">
+  <div x-data class="flex w-full">
       <div class="w-4/12">
           {{$this->searchForm}}
           <div>
               @livewire(\App\Livewire\Aksat\Rep\MainSearch::class)
           </div>
       </div>
-      <div x-data  x-show="$wire.showInfo" class="w-4/12 mx-3 p-0">
+      <div   x-show="$wire.showInfo" class="w-4/12 mx-3 p-0">
           {{ $this->mainInfolist }}
+          <div class="mt-2">
+              @livewire(\App\Livewire\Aksat\Rep\MainItem::class)
+          </div>
       </div>
-      <div x-data  x-show="$wire.showInfo" class="w-4/12 mx-0 p-0">
+      <div  x-show="$wire.showInfo" class="w-4/12 mx-0 p-0">
           @livewire(\App\Livewire\Aksat\Rep\KstTran::class)
+
       </div>
   </div>
 
