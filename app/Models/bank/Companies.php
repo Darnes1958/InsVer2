@@ -10,7 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Companies extends Model
 {
-  use HasApiTokens, HasFactory, Notifiable;
+
 
   protected $connection = 'other';
   protected $guarded = [];

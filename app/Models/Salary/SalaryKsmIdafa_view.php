@@ -10,7 +10,7 @@ class SalaryKsmIdafa_view extends Model
 {
   use HasFactory;
   protected $connection = 'other';
-  protected $guarded = [];
+
   protected $table = 'SalaryKsmIdafa_view';
 
   protected $primaryKey =null;

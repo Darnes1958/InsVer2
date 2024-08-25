@@ -2,13 +2,21 @@
 
 namespace App\Filament\Pages\Aksat\Rep;
 
+use App\Models\aksat\kst_trans;
 use App\Models\aksat\main;
 use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
+use App\Models\Customers;
 use App\Models\NewModel\Nmain;
+use App\Models\OverTar\over_kst;
+use App\Models\sell\rep_sell_tran;
 use App\Models\sell\sells;
 use App\Models\stores\halls_names;
 use App\Models\stores\stores_names;
+use ArPHP\I18N\Arabic;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -17,7 +25,10 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
 
@@ -86,6 +97,18 @@ class Contract extends Page implements HasInfolists
   {
       $this->no=null;
   }
+    public  function convertToArabic($html, int $line_length = 100, bool $hindo = false, $forcertl = false): string
+    {
+        $Arabic = new \ArPHP\I18N\Arabic();
+        $p = $Arabic->arIdentify($html);
+
+        for ($i = count($p) - 1; $i >= 0; $i -= 2) {
+            $utf8ar = $Arabic->utf8Glyphs(substr($html, $p[$i - 1], $p[$i] - $p[$i - 1]), $line_length, $hindo, $forcertl);
+            $html   = substr_replace($html, $utf8ar, $p[$i - 1], $p[$i] - $p[$i - 1]);
+        }
+
+        return $html;
+    }
   protected function getsearchFormSchema(): array
   {
     return [
@@ -138,7 +161,66 @@ class Contract extends Page implements HasInfolists
              $this->bank=null;
              $this->Taj=null;
              $this->By=$state;
-         })
+         }),
+           \Filament\Forms\Components\Actions::make([
+               \Filament\Forms\Components\Actions\Action::make('print1')
+                   ->label('طباعة')
+                   ->link()
+
+                   ->url(function (){
+                       if ($this->no) return route('pdfmain', $this->no);
+                   }),
+               \Filament\Forms\Components\Actions\Action::make('print2')
+                   ->label('طباعة نموذج')
+                   ->link()
+                   ->url(function (){
+                       if ($this->no) return route('pdfmaincont', $this->no);
+                   }),
+               \Filament\Forms\Components\Actions\Action::make('toArchif')
+                   ->label('نقل للأرشيف')
+                   ->color('info')
+                   ->link()
+                   ->requiresConfirmation()
+                   ->action(function (){
+                       DB::connection(Auth()->user()->company)->beginTransaction();
+                       try {
+                       $oldRecord=main::find($this->no);
+                       $newRecord = $oldRecord->replicate();
+                       $newRecord->setTable('MainArc');
+                       $newRecord->no=$this->no;
+                       $newRecord->save();
+
+                       kst_trans::query()
+                           ->where('no', $this->no)
+                           ->each(function ($oldTran) {
+                               $newTran = $oldTran->replicate();
+                               $newTran->setTable('TransArc');
+                               $newTran->save();
+                               $oldTran->delete();
+                           });
+                       over_kst::query()
+                               ->where('no', $this->no)
+                               ->each(function ($oldTran) {
+                                   $newTran = $oldTran->replicate();
+                                   $newTran->setTable('over_kst_a');
+                                   $newTran->save();
+                                   $oldTran->delete();
+                               });
+                       $oldRecord->delete();
+                       DB::connection(Auth()->user()->company)->commit();
+                       } catch (\Exception $e) {
+
+                           DB::connection(Auth()->user()->company)->rollback();
+                           Notification::make()
+                           ->title('حدث خطأ')
+                           ->send();
+                       }
+                   }),
+
+               ])
+               ->columnSpanFull()
+               ,
+
 
        ])->columns(4)
 
