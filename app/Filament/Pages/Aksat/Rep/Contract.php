@@ -2,13 +2,16 @@
 
 namespace App\Filament\Pages\Aksat\Rep;
 
+use App\Livewire\Aksat\Rep\TarKst;
 use App\Models\aksat\kst_trans;
 use App\Models\aksat\main;
+use App\Models\aksat\MainArc;
 use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
 use App\Models\Customers;
 use App\Models\NewModel\Nmain;
 use App\Models\OverTar\over_kst;
+use App\Models\OverTar\tar_kst;
 use App\Models\sell\rep_sell_tran;
 use App\Models\sell\sells;
 use App\Models\stores\halls_names;
@@ -51,6 +54,8 @@ class Contract extends Page implements HasInfolists
     public $Order_no;
     public $showInfo=false;
     public $showOver=false;
+    public $showTar=false;
+    public $showArc=false;
     public $By=false;
     public function mount(): void
     {
@@ -66,6 +71,8 @@ class Contract extends Page implements HasInfolists
         $this->searchForm->fill(['no'=>$no,'By'=>$this->By,'bank'=>$this->bank,'Taj'=>$this->Taj]);
         $this->showInfo=true;
         $this->showOver= over_kst::where('no',$this->no)->exists();
+        $this->showTar= tar_kst::where('no',$this->no)->exists();
+        $this->showArc= MainArc::where('jeha',$this->Main->jeha)->exists();
     }
 
 
@@ -88,8 +95,12 @@ class Contract extends Page implements HasInfolists
           $this->Main=$res;
           $this->showInfo=true;
           $this->showOver= over_kst::where('no',$this->no)->exists();
+          $this->showTar= tar_kst::where('no',$this->no)->exists();
+          $this->showArc= MainArc::where('jeha',$this->Main->jeha)->exists();
           $this->dispatch('MainItemOrder',order_no: $this->Main->order_no);
           $this->dispatch('OverKstNo',no: $this->no);
+          $this->dispatch('TarKstNo',no: $this->no);
+          $this->dispatch('ContJeha',jeha: $this->Main->jeha);
 
       } else $this->showInfo=false;
 
@@ -158,19 +169,21 @@ class Contract extends Page implements HasInfolists
                \Filament\Forms\Components\Actions\Action::make('print1')
                    ->label('طباعة')
                    ->link()
-
+                   ->visible($this->showInfo)
                    ->url(function (){
                        if ($this->no) return route('pdfmain', $this->no);
                    }),
                \Filament\Forms\Components\Actions\Action::make('print2')
                    ->label('طباعة نموذج')
                    ->link()
+                   ->visible($this->showInfo)
                    ->url(function (){
                        if ($this->no) return route('pdfmaincont', $this->no);
                    }),
                \Filament\Forms\Components\Actions\Action::make('toArchif')
                    ->label('نقل للأرشيف')
                    ->color('info')
+                   ->visible($this->showInfo)
                    ->link()
                    ->requiresConfirmation()
                    ->action(function (){
@@ -213,6 +226,16 @@ class Contract extends Page implements HasInfolists
                            ->send();
                        }
                    }),
+               \Filament\Forms\Components\Actions\Action::make('oldMain')
+                   ->label(function (){
+                       return 'عقود سابقة ('.MainArc::where('jeha',$this->Main->jeha)->count().')';
+                   })
+                   ->color('success')
+                   ->link()
+                   ->visible($this->showInfo && MainArc::where('jeha',$this->Main->jeha)->exists())
+                   ->url(function (){
+                       if ($this->no) return route('pdfmaincont', $this->no);
+                   }),
 
                ])
                ->columnSpanFull()
@@ -235,27 +258,27 @@ class Contract extends Page implements HasInfolists
                  ->hiddenLabel()
                  ->columnSpan(3),
                 TextEntry::make('jeha')
-                    ->prefix(new HtmlString('<span class="text-white "> رقم الزبون&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> رقم الزبون&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->color('info')
                     ->columnSpan(3),
                 TextEntry::make('acc')
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="text-white "> رقم الحساب&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="ttext-gray-600 dark:text-white "> رقم الحساب&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(3),
                 TextEntry::make('bank.bank_name')
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="text-white "> المصرف&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> المصرف&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(3),
                 TextEntry::make('place.place_name')
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="text-white "> جهة العمل&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> جهة العمل&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(3),
                 TextEntry::make('sell_point')
-                    ->prefix(new HtmlString('<span class="text-white "> نقطة البيع&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> نقطة البيع&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->color('info')
                     ->state(function (){
@@ -266,13 +289,13 @@ class Contract extends Page implements HasInfolists
                     ->columnSpan(3),
                 TextEntry::make('sul_date')
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="text-white "> ت.العقد&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ت.العقد&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
 
                     ->columnSpan(2),
                 TextEntry::make('sul_tot')
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="text-white "> ج.الفاتورة&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ج.الفاتورة&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('cash')
@@ -280,32 +303,32 @@ class Contract extends Page implements HasInfolists
                     ->state(function (){
                         return $this->Order_no->cash;
                     })
-                    ->prefix(new HtmlString('<span class="text-white "> المدفوع&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> المدفوع&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('sul')
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="text-white "> ج.التقسيط&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ج.التقسيط&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('sul_pay')
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="text-white "> المسدد&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> المسدد&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('raseed')
                     ->color('danger')
-                    ->prefix(new HtmlString('<span class="text-white "> المطلوب&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white"> المطلوب&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('kst_count')
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="text-white "> عدد الأقساط&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> عدد الأقساط&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('kst')
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="text-white "> القسط&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> القسط&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('kst_raseed')
@@ -320,7 +343,7 @@ class Contract extends Page implements HasInfolists
                         return $kst_raseed;
                     })
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="text-white "> متبقية&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> متبقية&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('notes')

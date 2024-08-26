@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Auth;
 
 class MainArc extends Model
 {
-    use HasFactory;
+
   protected $connection = 'other';
-  protected $guarded = [];
+
   protected $table = 'MainArc';
   protected $primaryKey =false;
   public $incrementing = false;

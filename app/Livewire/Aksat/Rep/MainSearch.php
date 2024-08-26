@@ -25,12 +25,14 @@ class MainSearch extends BaseWidget
   public $showSearch = true;
   protected static ?string $heading="";
 
-  public function Do($no,$order_no)
+  public function Do($no,$order_no,$jeha)
   {
       $this->dispatch('KstTranNo',no: $no);
       $this->dispatch('showMe',no: $no);
       $this->dispatch('MainItemOrder',order_no: $order_no);
       $this->dispatch('OverKstNo',no: $no);
+      $this->dispatch('TarKstNo',no: $no);
+      $this->dispatch('ContJeha',jeha: $jeha);
   }
     #[On('takeBank')]
     public function takeBank($bank,$by){
@@ -66,7 +68,7 @@ class MainSearch extends BaseWidget
             ->columns([
               Tables\Columns\TextColumn::make('no')
                   ->action(function (main $record){
-                      $this->Do($record->no,$record->order_no);
+                      $this->Do($record->no,$record->order_no,$record->jeha);
                   })
                   ->color('primary')
                   ->size(TextColumnSize::ExtraSmall)
@@ -74,7 +76,7 @@ class MainSearch extends BaseWidget
               TextColumn::make('name')
                   ->searchable()
                   ->action(function (main $record): void{
-                      $this->Do($record->no,$record->order_no);                     }
+                      $this->Do($record->no,$record->order_no,$record->jeha);                     }
                   )
                   ->limit(25)
                   ->tooltip(function (TextColumn $column): ?string {
@@ -89,14 +91,14 @@ class MainSearch extends BaseWidget
               TextColumn::make('acc')
                   ->searchable()
                   ->action(function (main $record){
-                      $this->Do($record->no,$record->order_no);
+                      $this->Do($record->no,$record->order_no,$record->jeha);
                   })
                   ->size(TextColumnSize::ExtraSmall)
                   ->color('info')
                   ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">رقم الحساب</span>')),
               TextColumn::make('sul')
                   ->action(function (main $record){
-                      $this->Do($record->no,$record->order_no);
+                      $this->Do($record->no,$record->order_no,$record->jeha);
                   })
                   ->numeric(
                       decimalPlaces: 0,
@@ -107,7 +109,7 @@ class MainSearch extends BaseWidget
                   ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">الاجمالي</span>')),
               TextColumn::make('kst')
                   ->action(function (main $record){
-                      $this->Do($record->no,$record->order_no);
+                      $this->Do($record->no,$record->order_no,$record->jeha);
                   })
                   ->numeric(
                       decimalPlaces: 0,
