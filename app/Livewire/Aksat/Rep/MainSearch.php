@@ -30,12 +30,18 @@ class MainSearch extends BaseWidget
       $this->dispatch('KstTranNo',no: $no);
       $this->dispatch('showMe',no: $no);
       $this->dispatch('MainItemOrder',order_no: $order_no);
+      $this->dispatch('OverKstNo',no: $no);
   }
     #[On('takeBank')]
     public function takeBank($bank,$by){
         $this->By=$by;
         $this->bank=$bank;
     }
+    #[On('resetSearch')]
+    public function resetSearch(){
+        $this->resetTable();
+    }
+
     public function table(Table $table): Table
     {
         return $table

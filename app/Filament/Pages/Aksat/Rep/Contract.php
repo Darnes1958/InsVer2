@@ -50,6 +50,7 @@ class Contract extends Page implements HasInfolists
     public  $Main;
     public $Order_no;
     public $showInfo=false;
+    public $showOver=false;
     public $By=false;
     public function mount(): void
     {
@@ -61,10 +62,10 @@ class Contract extends Page implements HasInfolists
     public function showMe($no){
         $this->Main=Nmain::find($no);
         $this->Order_no=sells::find($this->Main->order_no);
-
         $this->no=$no;
         $this->searchForm->fill(['no'=>$no,'By'=>$this->By,'bank'=>$this->bank,'Taj'=>$this->Taj]);
         $this->showInfo=true;
+        $this->showOver= over_kst::where('no',$this->no)->exists();
     }
 
 
@@ -86,7 +87,9 @@ class Contract extends Page implements HasInfolists
       if  ($res) {
           $this->Main=$res;
           $this->showInfo=true;
+          $this->showOver= over_kst::where('no',$this->no)->exists();
           $this->dispatch('MainItemOrder',order_no: $this->Main->order_no);
+          $this->dispatch('OverKstNo',no: $this->no);
 
       } else $this->showInfo=false;
 
@@ -97,18 +100,7 @@ class Contract extends Page implements HasInfolists
   {
       $this->no=null;
   }
-    public  function convertToArabic($html, int $line_length = 100, bool $hindo = false, $forcertl = false): string
-    {
-        $Arabic = new \ArPHP\I18N\Arabic();
-        $p = $Arabic->arIdentify($html);
 
-        for ($i = count($p) - 1; $i >= 0; $i -= 2) {
-            $utf8ar = $Arabic->utf8Glyphs(substr($html, $p[$i - 1], $p[$i] - $p[$i - 1]), $line_length, $hindo, $forcertl);
-            $html   = substr_replace($html, $utf8ar, $p[$i - 1], $p[$i] - $p[$i - 1]);
-        }
-
-        return $html;
-    }
   protected function getsearchFormSchema(): array
   {
     return [
@@ -208,6 +200,11 @@ class Contract extends Page implements HasInfolists
                                });
                        $oldRecord->delete();
                        DB::connection(Auth()->user()->company)->commit();
+                       $this->Main=Nmain::first();
+                       $this->no=null;
+                       $this->showInfo=false;
+                       $this->dispatch('resetSearch');
+
                        } catch (\Exception $e) {
 
                            DB::connection(Auth()->user()->company)->rollback();
