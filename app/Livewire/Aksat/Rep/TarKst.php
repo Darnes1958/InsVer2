@@ -33,6 +33,7 @@ class TarKst extends BaseWidget
                 $main=tar_kst::where('no',$this->no);
                 return $main;
             })
+            ->queryStringIdentifier('TraKst')
             ->columns([
                 Tables\Columns\TextColumn::make('ser')
                  ->rowIndex()

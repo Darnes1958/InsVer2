@@ -33,6 +33,7 @@ class OverKst extends BaseWidget
                 $main=over_kst::where('no',$this->no);
                 return $main;
             })
+            ->queryStringIdentifier('OverKst')
             ->columns([
                 Tables\Columns\TextColumn::make('ser')
                     ->rowIndex()

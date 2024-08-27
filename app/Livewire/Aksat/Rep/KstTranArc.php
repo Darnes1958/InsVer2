@@ -33,6 +33,7 @@ class KstTranArc extends BaseWidget
                 $main=TransArc::where('no',$this->no);
                 return $main;
             })
+            ->queryStringIdentifier('KstTranArc')
             ->columns([
                 Tables\Columns\TextColumn::make('ser')
                     ->action(function(kst_trans $record){

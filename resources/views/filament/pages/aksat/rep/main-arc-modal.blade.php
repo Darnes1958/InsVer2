@@ -3,8 +3,11 @@
 
         <div    class="w-6/12 mx-3 ">
             <div >
-                {{ $this->mainArcInfolist }}
-                <div class="mt-2">
+                <x-filament::section>
+                    {{ $this->mainArcInfolist }}
+                </x-filament::section>
+
+                <div class="mt-2 pt-2">
                     @livewire(\App\Livewire\Aksat\Rep\MainItemArc::class)
                 </div>
             </div>

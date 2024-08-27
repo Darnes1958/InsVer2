@@ -34,6 +34,7 @@ class OverKstArc extends BaseWidget
                 $main=over_kst_a::where('no',$this->no);
                 return $main;
             })
+            ->queryStringIdentifier('OverKstArc')
             ->columns([
                 Tables\Columns\TextColumn::make('ser')
                     ->rowIndex()

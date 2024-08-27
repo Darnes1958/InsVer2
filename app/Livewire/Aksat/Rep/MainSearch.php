@@ -52,6 +52,8 @@ class MainSearch extends BaseWidget
             ->paginationPageOptions([5,10,50])
          //   ->defaultSort('no','desc')
             ->searchPlaceholder('بحث برقم الحساب او الاسم')
+            ->queryStringIdentifier('MainSearch')
+
             ->query(function (main $main){
               $main=main::query()
                   ->when($this->bank,function ($q){
@@ -64,7 +66,6 @@ class MainSearch extends BaseWidget
 
              return $main;
             })
-
             ->columns([
               Tables\Columns\TextColumn::make('no')
                   ->action(function (main $record){
@@ -72,7 +73,7 @@ class MainSearch extends BaseWidget
                   })
                   ->color('primary')
                   ->size(TextColumnSize::ExtraSmall)
-                  ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">الرقم</span>')),
+                  ->label(new HtmlString('<span  style="font-size: smaller;">الرقم</span>')),
               TextColumn::make('name')
                   ->searchable()
                   ->action(function (main $record): void{

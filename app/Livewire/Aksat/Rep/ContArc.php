@@ -32,14 +32,14 @@ class ContArc extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading(new HtmlString('<span style="font-size: smaller;color: #00bb00">عقود سابقة (أرشيف)&nbsp;&nbsp;</span>'))
-            ->defaultPaginationPageOption(5)
-            ->paginationPageOptions([5,10,15])
+
+            ->paginated(false)
             ->defaultSort('sul_date')
             ->query(function (MainArc $main){
                 $main=MainArc::where('jeha',$this->jeha);
                 return $main;
             })
+
             ->recordUrl(null)
             ->columns([
                 Tables\Columns\TextColumn::make('no')

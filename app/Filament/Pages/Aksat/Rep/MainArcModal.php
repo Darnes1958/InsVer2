@@ -62,30 +62,35 @@ class MainArcModal extends Page implements HasInfolists
             ->schema([
                 TextEntry::make('name')
                     ->color('primary')
+                    ->extraEntryWrapperAttributes(['style' => 'height: 16px;'])
                     ->hiddenLabel()
                     ->columnSpan(3),
                 TextEntry::make('jeha')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> رقم الزبون&nbsp;&nbsp;</span>'))
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->hiddenLabel()
                     ->color('info')
                     ->columnSpan(3),
                 TextEntry::make('acc')
                     ->color('info')
                     ->prefix(new HtmlString('<span class="ttext-gray-600 dark:text-white "> رقم الحساب&nbsp;&nbsp;</span>'))
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->hiddenLabel()
                     ->columnSpan(3),
                 TextEntry::make('bank.bank_name')
-                    ->color('info')
-                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> المصرف&nbsp;&nbsp;</span>'))
+                    ->color('primary')
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->hiddenLabel()
                     ->columnSpan(3),
                 TextEntry::make('place.place_name')
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> جهة العمل&nbsp;&nbsp;</span>'))
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->hiddenLabel()
                     ->columnSpan(3),
                 TextEntry::make('sell_point')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> نقطة البيع&nbsp;&nbsp;</span>'))
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->hiddenLabel()
                     ->color('info')
                     ->state(function (){
@@ -98,11 +103,12 @@ class MainArcModal extends Page implements HasInfolists
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ت.العقد&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
-
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->columnSpan(2),
                 TextEntry::make('sul_tot')
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ج.الفاتورة&nbsp;&nbsp;</span>'))
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('cash')
@@ -110,21 +116,25 @@ class MainArcModal extends Page implements HasInfolists
                     ->state(function (){
                         return $this->order_no->cash;
                     })
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> المدفوع&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('sul')
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ج.التقسيط&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('sul_pay')
                     ->color('info')
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> المسدد&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('raseed')
                     ->color('danger')
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white"> المطلوب&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
@@ -132,11 +142,13 @@ class MainArcModal extends Page implements HasInfolists
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> عدد الأقساط&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->columnSpan(2),
                 TextEntry::make('kst')
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> القسط&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->columnSpan(2),
                 TextEntry::make('kst_raseed')
                     ->state(function (){
@@ -149,16 +161,20 @@ class MainArcModal extends Page implements HasInfolists
                         }
                         return $kst_raseed;
                     })
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> متبقية&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('notes')
                     ->color('success')
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ملاحظات&nbsp;&nbsp;</span>'))
+                    ->hiddenLabel()
                     ->visible(function (MainArc $record){
                         return $record->notes!=null;
                     })
-                    ->Label('ملاحظات')
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
+
                     ->columnSpan(6),
 
             ])->columns(6);

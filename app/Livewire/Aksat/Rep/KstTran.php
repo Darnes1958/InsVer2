@@ -32,6 +32,7 @@ class KstTran extends BaseWidget
                 $main=kst_trans::where('no',$this->no);
                 return $main;
             })
+            ->queryStringIdentifier('KstTran')
             ->columns([
                 Tables\Columns\TextColumn::make('ser')
                     ->action(function(kst_trans $record){

@@ -21,6 +21,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -176,42 +177,55 @@ class Contract extends Page implements HasInfolists
            \Filament\Forms\Components\Actions::make([
                \Filament\Forms\Components\Actions\Action::make('print1')
                    ->label('طباعة')
-                   ->link()
+                   ->outlined()
                    ->visible($this->showInfo)
                    ->url(function (){
                        if ($this->no) return route('pdfmain', $this->no);
                    }),
                \Filament\Forms\Components\Actions\Action::make('print2')
                    ->label('طباعة نموذج')
-                   ->link()
+                   ->outlined()
                    ->visible($this->showInfo)
                    ->url(function (){
                        if ($this->no) return route('pdfmaincont', $this->no);
                    }),
+
+               ])
+               ->columnSpan(2) ,
+           Placeholder::make('lastcont')
+               ->hiddenLabel()
+               ->visible($this->showInfo && MainArc::where('jeha',$this->Main->jeha)->count()>0)
+               ->content(new HtmlString('<span style="color: #00bb00"> عقود سابقة ('.MainArc::where('jeha',$this->Main->jeha)->count().')</span>')),
+           Placeholder::make('livecont')
+               ->hiddenLabel()
+               ->visible($this->showInfo && main::where('jeha',$this->Main->jeha)->where('no','!=',$this->Main->no)->count()>0)
+               ->content(new HtmlString('<span style="color: yellow"> عقود قائمة ('.main::where('jeha',$this->Main->jeha)->where('no','!=',$this->Main->no)->count().')</span>')),
+           \Filament\Forms\Components\Actions::make([
+
                \Filament\Forms\Components\Actions\Action::make('toArchif')
                    ->label('نقل للأرشيف')
                    ->color('info')
                    ->visible($this->showInfo)
-                   ->link()
+                   ->outlined()
                    ->requiresConfirmation()
                    ->action(function (){
                        DB::connection(Auth()->user()->company)->beginTransaction();
                        try {
-                       $oldRecord=main::find($this->no);
-                       $newRecord = $oldRecord->replicate();
-                       $newRecord->setTable('MainArc');
-                       $newRecord->no=$this->no;
-                       $newRecord->save();
+                           $oldRecord=main::find($this->no);
+                           $newRecord = $oldRecord->replicate();
+                           $newRecord->setTable('MainArc');
+                           $newRecord->no=$this->no;
+                           $newRecord->save();
 
-                       kst_trans::query()
-                           ->where('no', $this->no)
-                           ->each(function ($oldTran) {
-                               $newTran = $oldTran->replicate();
-                               $newTran->setTable('TransArc');
-                               $newTran->save();
-                               $oldTran->delete();
-                           });
-                       over_kst::query()
+                           kst_trans::query()
+                               ->where('no', $this->no)
+                               ->each(function ($oldTran) {
+                                   $newTran = $oldTran->replicate();
+                                   $newTran->setTable('TransArc');
+                                   $newTran->save();
+                                   $oldTran->delete();
+                               });
+                           over_kst::query()
                                ->where('no', $this->no)
                                ->each(function ($oldTran) {
                                    $newTran = $oldTran->replicate();
@@ -219,40 +233,23 @@ class Contract extends Page implements HasInfolists
                                    $newTran->save();
                                    $oldTran->delete();
                                });
-                       $oldRecord->delete();
-                       DB::connection(Auth()->user()->company)->commit();
-                       $this->Main=Nmain::first();
-                       $this->no=null;
-                       $this->showInfo=false;
-                       $this->dispatch('resetSearch');
+                           $oldRecord->delete();
+                           DB::connection(Auth()->user()->company)->commit();
+                           $this->Main=Nmain::first();
+                           $this->no=null;
+                           $this->showInfo=false;
+                           $this->dispatch('resetSearch');
 
                        } catch (\Exception $e) {
 
                            DB::connection(Auth()->user()->company)->rollback();
                            Notification::make()
-                           ->title('حدث خطأ')
-                           ->send();
+                               ->title('حدث خطأ')
+                               ->send();
                        }
                    }),
-               \Filament\Forms\Components\Actions\Action::make('oldMain')
-                   ->label(function (){
-                       return 'عقود سابقة ('.MainArc::where('jeha',$this->Main->jeha)->count().')';
-                   })
-                   ->color('success')
-                   ->link()
-                   ->visible($this->showInfo && MainArc::where('jeha',$this->Main->jeha)->exists())
-                   ->url(function (){
-                       if ($this->no) return route('pdfmaincont', $this->no);
-                   }),
-
-               ])
-               ->columnSpanFull()
-               ,
-
-
+           ])->columnSpan(2) ,
        ])->columns(4)
-
-
     ];
   }
   public function mainInfolist(Infolist $infolist): Infolist
@@ -263,30 +260,43 @@ class Contract extends Page implements HasInfolists
             ->schema([
                 TextEntry::make('name')
                  ->color('primary')
+                    ->size(function (){
+                        if (strlen($this->Main->name)>50) return TextEntry\TextEntrySize::ExtraSmall;
+                        else return TextEntry\TextEntrySize::Small;
+                    })
+                 ->extraEntryWrapperAttributes(['style' => 'height: 16px;'])
                  ->hiddenLabel()
                  ->columnSpan(3),
                 TextEntry::make('jeha')
-                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> رقم الزبون&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white " > رقم الزبون&nbsp;&nbsp;</span>'))
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->hiddenLabel()
                     ->color('info')
                     ->columnSpan(3),
                 TextEntry::make('acc')
                     ->color('info')
-                    ->prefix(new HtmlString('<span class="ttext-gray-600 dark:text-white "> رقم الحساب&nbsp;&nbsp;</span>'))
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white " > رقم الحساب&nbsp;&nbsp;</span>'))
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->hiddenLabel()
                     ->columnSpan(3),
                 TextEntry::make('bank.bank_name')
-                    ->color('info')
-                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> المصرف&nbsp;&nbsp;</span>'))
+                    ->color('primary')
+                    ->size(function (){
+                        if (strlen($this->Main->name)>40) return TextEntry\TextEntrySize::ExtraSmall;
+                        else return TextEntry\TextEntrySize::Small;
+                    })
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->hiddenLabel()
                     ->columnSpan(3),
                 TextEntry::make('place.place_name')
                     ->color('info')
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> جهة العمل&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(3),
                 TextEntry::make('sell_point')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> نقطة البيع&nbsp;&nbsp;</span>'))
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->hiddenLabel()
                     ->color('info')
                     ->state(function (){
@@ -296,6 +306,7 @@ class Contract extends Page implements HasInfolists
 
                     ->columnSpan(3),
                 TextEntry::make('sul_date')
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ت.العقد&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
@@ -303,11 +314,13 @@ class Contract extends Page implements HasInfolists
                     ->columnSpan(2),
                 TextEntry::make('sul_tot')
                     ->color('info')
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ج.الفاتورة&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
                 TextEntry::make('cash')
                     ->color('info')
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->state(function (){
                         return $this->Order_no->cash;
                     })
@@ -316,6 +329,7 @@ class Contract extends Page implements HasInfolists
                     ->columnSpan(2),
                 TextEntry::make('sul')
                     ->color('info')
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ج.التقسيط&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
@@ -323,21 +337,25 @@ class Contract extends Page implements HasInfolists
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> المسدد&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->columnSpan(2),
                 TextEntry::make('raseed')
                     ->color('danger')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white"> المطلوب&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->columnSpan(2),
                 TextEntry::make('kst_count')
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> عدد الأقساط&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->columnSpan(2),
                 TextEntry::make('kst')
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> القسط&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->columnSpan(2),
                 TextEntry::make('kst_raseed')
                     ->state(function (){
@@ -351,6 +369,7 @@ class Contract extends Page implements HasInfolists
                         return $kst_raseed;
                     })
                     ->color('info')
+                    ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> متبقية&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
                     ->columnSpan(2),
@@ -359,7 +378,9 @@ class Contract extends Page implements HasInfolists
                     ->visible(function (Nmain $record){
                         return $record->notes!=null;
                     })
-                    ->Label('ملاحظات')
+                    ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ملاحظات&nbsp;&nbsp;</span>'))
+                    ->hiddenLabel()
+                    ->extraEntryWrapperAttributes(['style' => 'height: 12px;'])
                     ->columnSpan(6),
 
             ])->columns(6);
