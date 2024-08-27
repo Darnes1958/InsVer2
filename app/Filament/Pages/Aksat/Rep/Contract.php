@@ -57,11 +57,19 @@ class Contract extends Page implements HasInfolists
     public $showTar=false;
     public $showArc=false;
     public $By=false;
+    public $arcOver;
+    public $arcNo;
     public function mount(): void
     {
         $this->Main=Nmain::first();
         $this->Order_no=sells::find($this->Main->order_no);
         $this->searchForm->fill(['By'=>$this->By,]);
+    }
+    #[On('ArcData')]
+    public function ArcData($arcNo,$arcOver)
+    {
+        $this->arcOver=$arcOver;
+        $this->arcNo=$arcNo;
     }
     #[On('showMe')]
     public function showMe($no){

@@ -30,5 +30,17 @@
           @livewire(\App\Livewire\Aksat\Rep\KstTran::class)
       </div>
   </div>
+    <x-filament::modal id="mymainModal" slide-over width="6xl" sticky-header>
+
+        <x-slot name="heading">
+            <div x-data class="flex">
+               <div>عقد من الأرشيف رقم :  {{$arcNo}}</div>
+                <div x-show="$wire.arcOver>0" style="margin-right: 10px;color: #00bb00"> اقساط بالفائض {{$arcOver}}</div>
+            </div>
+
+        </x-slot>
+
+        @livewire(\App\Filament\Pages\Aksat\Rep\MainArcModal::class)        {{-- Modal content --}}
+    </x-filament::modal>
 
 </x-filament-panels::page>
