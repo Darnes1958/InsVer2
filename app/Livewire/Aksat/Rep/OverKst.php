@@ -24,7 +24,6 @@ class OverKst extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading(new HtmlString('<span style="font-size: smaller;color: #00bb00">خصم بالفائض&nbsp;&nbsp;</span>'))
             ->emptyStateHeading('لا توجد بيانات')
             ->defaultPaginationPageOption(5)
             ->paginationPageOptions([5,10,15])
@@ -38,7 +37,7 @@ class OverKst extends BaseWidget
                 Tables\Columns\TextColumn::make('ser')
                     ->rowIndex()
                     ->size(TextColumnSize::ExtraSmall)
-                    ->label('ت'),
+                    ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">خصم بالفائض&nbsp;&nbsp;</span>')),
                 Tables\Columns\TextColumn::make('tar_date')
                     ->size(TextColumnSize::ExtraSmall)
                     ->label('التاريخ'),

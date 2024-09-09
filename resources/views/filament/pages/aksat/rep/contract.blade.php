@@ -9,12 +9,13 @@
 
                     @livewire(\App\Livewire\Aksat\Rep\MainSearch::class)
 
-                <x-filament::section collapsible  x-show="$wire.showArc" class="mt-2" >
-                    <x-slot name="heading"    >
-                        <span style="font-size: smaller;color: #00bb00"> عقود سابقة</span>
-                    </x-slot>
-                    @livewire(\App\Livewire\Aksat\Rep\ContArc::class)
-                </x-filament::section>
+
+                    <div x-show="$wire.showArc" class="mt-2">
+                        @livewire(\App\Livewire\Aksat\Rep\ContArc::class)
+                    </div>
+
+
+
             </div>
             <div  class="w-4/12 mx-3 p-0">
                 <div x-show="$wire.showInfo">

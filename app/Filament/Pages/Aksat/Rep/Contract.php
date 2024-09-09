@@ -58,13 +58,14 @@ class Contract extends Page implements HasInfolists
     public $showTar=false;
     public $showArc=false;
     public $By=false;
+
     public $arcOver;
     public $arcNo;
     public function mount(): void
     {
         $this->Main=Nmain::first();
         $this->Order_no=sells::find($this->Main->order_no);
-        $this->searchForm->fill(['By'=>$this->By,]);
+        $this->searchForm->fill(['By'=>$this->By,'WithKsm'=>true,]);
     }
     #[On('ArcData')]
     public function ArcData($arcNo,$arcOver)
@@ -77,7 +78,7 @@ class Contract extends Page implements HasInfolists
         $this->Main=Nmain::find($no);
         $this->Order_no=sells::find($this->Main->order_no);
         $this->no=$no;
-        $this->searchForm->fill(['no'=>$no,'By'=>$this->By,'bank'=>$this->bank,'Taj'=>$this->Taj]);
+        $this->searchForm->fill(['no'=>$no,'By'=>$this->By,'bank'=>$this->bank,'Taj'=>$this->Taj,'WithKsm'=>true]);
         $this->showInfo=true;
         $this->showOver= over_kst::where('no',$this->no)->exists();
         $this->showTar= tar_kst::where('no',$this->no)->exists();
@@ -192,19 +193,12 @@ class Contract extends Page implements HasInfolists
 
                ])
                ->columnSpan(2) ,
-           Placeholder::make('lastcont')
-               ->hiddenLabel()
-               ->visible($this->showInfo && MainArc::where('jeha',$this->Main->jeha)->count()>0)
-               ->content(new HtmlString('<span style="color: #00bb00"> عقود سابقة ('.MainArc::where('jeha',$this->Main->jeha)->count().')</span>')),
-           Placeholder::make('livecont')
-               ->hiddenLabel()
-               ->visible($this->showInfo && main::where('jeha',$this->Main->jeha)->where('no','!=',$this->Main->no)->count()>0)
-               ->content(new HtmlString('<span style="color: yellow"> عقود قائمة ('.main::where('jeha',$this->Main->jeha)->where('no','!=',$this->Main->no)->count().')</span>')),
+
            \Filament\Forms\Components\Actions::make([
                \Filament\Forms\Components\Actions\Action::make('toArchif')
                    ->label('نقل للأرشيف')
                    ->color('info')
-                   ->visible($this->showInfo)
+                   ->visible($this->showInfo && $this->Main->raseed<=0)
                    ->outlined()
                    ->requiresConfirmation()
                    ->action(function (){
@@ -248,6 +242,13 @@ class Contract extends Page implements HasInfolists
                        }
                    }),
            ])->columnSpan(2) ,
+           Checkbox::make('WithKsm')
+               ->label(new HtmlString('<span style="font-size: smaller">المخصومة فقط</span>'))
+
+               ->live()
+               ->afterStateUpdated(function ($state){
+                   $this->dispatch('TakeWithKsm',withksm: $state) ;
+               }),
        ])
        ->columns(12)
           ->extraAttributes(['class' => 'flush'])
@@ -298,6 +299,7 @@ class Contract extends Page implements HasInfolists
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> جهة العمل&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->size(TextEntry\TextEntrySize::ExtraSmall)
                     ->columnSpan(3),
                 TextEntry::make('sell_point')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> نقطة البيع&nbsp;&nbsp;</span>'))
@@ -316,7 +318,7 @@ class Contract extends Page implements HasInfolists
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ت.العقد&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
-
+                    ->size(TextEntry\TextEntrySize::ExtraSmall)
                     ->columnSpan(2),
                 TextEntry::make('sul_tot')
                     ->color('info')
@@ -386,6 +388,11 @@ class Contract extends Page implements HasInfolists
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> القسط&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->numeric(
+                        decimalPlaces: 0,
+                        decimalSeparator: '',
+                        thousandsSeparator: ',',
+                    )
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->columnSpan(2),
                 TextEntry::make('kst_raseed')

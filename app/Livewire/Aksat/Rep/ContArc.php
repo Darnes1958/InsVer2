@@ -46,7 +46,7 @@ class ContArc extends BaseWidget
                     ->action(function (MainArc $record){$this->Do($record->no);})
                     ->tooltip('انقر للعرض')
                     ->size(TextColumnSize::ExtraSmall)
-                    ->label('الرقم'),
+                    ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">عقود سابقة&nbsp;&nbsp;</span>')),
                 Tables\Columns\TextColumn::make('sul_date')
                     ->action(function (MainArc $record){$this->Do($record->no);})
                     ->tooltip('انقر للعرض')
