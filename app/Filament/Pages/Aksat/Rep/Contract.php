@@ -145,7 +145,7 @@ class Contract extends Page implements HasInfolists
             })
             ->searchable()
             ->live()
-               ->hiddenLabel()
+            ->hiddenLabel()
             ->options(bank::all()->pluck('bank_name','bank_no'))
            ->afterStateUpdated(function ($state){
                $this->bank=$state;
@@ -201,7 +201,6 @@ class Contract extends Page implements HasInfolists
                ->visible($this->showInfo && main::where('jeha',$this->Main->jeha)->where('no','!=',$this->Main->no)->count()>0)
                ->content(new HtmlString('<span style="color: yellow"> عقود قائمة ('.main::where('jeha',$this->Main->jeha)->where('no','!=',$this->Main->no)->count().')</span>')),
            \Filament\Forms\Components\Actions::make([
-
                \Filament\Forms\Components\Actions\Action::make('toArchif')
                    ->label('نقل للأرشيف')
                    ->color('info')
@@ -249,7 +248,12 @@ class Contract extends Page implements HasInfolists
                        }
                    }),
            ])->columnSpan(2) ,
-       ])->columns(4)
+       ])
+       ->columns(12)
+          ->extraAttributes(['class' => 'flush'])
+
+
+
     ];
   }
   public function mainInfolist(Infolist $infolist): Infolist
@@ -278,6 +282,7 @@ class Contract extends Page implements HasInfolists
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white " > رقم الحساب&nbsp;&nbsp;</span>'))
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->hiddenLabel()
+                    ->size(TextEntry\TextEntrySize::ExtraSmall)
                     ->columnSpan(3),
                 TextEntry::make('bank.bank_name')
                     ->color('primary')
@@ -298,6 +303,7 @@ class Contract extends Page implements HasInfolists
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> نقطة البيع&nbsp;&nbsp;</span>'))
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->hiddenLabel()
+                    ->size(TextEntry\TextEntrySize::ExtraSmall)
                     ->color('info')
                     ->state(function (){
                         if ($this->Order_no->sell_type==1) return stores_names::find($this->Order_no->place_no)->st_name;
@@ -317,6 +323,11 @@ class Contract extends Page implements HasInfolists
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ج.الفاتورة&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->numeric(
+                        decimalPlaces: 0,
+                        decimalSeparator: '',
+                        thousandsSeparator: ',',
+                    )
                     ->columnSpan(2),
                 TextEntry::make('cash')
                     ->color('info')
@@ -326,23 +337,43 @@ class Contract extends Page implements HasInfolists
                     })
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> المدفوع&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->numeric(
+                        decimalPlaces: 0,
+                        decimalSeparator: '',
+                        thousandsSeparator: ',',
+                    )
                     ->columnSpan(2),
                 TextEntry::make('sul')
                     ->color('info')
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ج.التقسيط&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->numeric(
+                        decimalPlaces: 0,
+                        decimalSeparator: '',
+                        thousandsSeparator: ',',
+                    )
                     ->columnSpan(2),
                 TextEntry::make('sul_pay')
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> المسدد&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->numeric(
+                        decimalPlaces: 0,
+                        decimalSeparator: '',
+                        thousandsSeparator: ',',
+                    )
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->columnSpan(2),
                 TextEntry::make('raseed')
                     ->color('danger')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white"> المطلوب&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
+                    ->numeric(
+                        decimalPlaces: 0,
+                        decimalSeparator: '',
+                        thousandsSeparator: ',',
+                    )
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->columnSpan(2),
                 TextEntry::make('kst_count')

@@ -35,29 +35,30 @@ class KstTran extends BaseWidget
             ->queryStringIdentifier('KstTran')
             ->columns([
                 Tables\Columns\TextColumn::make('ser')
-                    ->action(function(kst_trans $record){
-                        info($record->no);
-                    })
+                    ->size(TextColumnSize::ExtraSmall)
                     ->color('primary')
                     ->sortable()
                     ->label('ت'),
                 Tables\Columns\TextColumn::make('kst_date')
+                    ->size(TextColumnSize::ExtraSmall)
                     ->toggleable()
                     ->sortable()
                     ->label('ت.الاستحقاق'),
                 Tables\Columns\TextColumn::make('ksm_date')
+                    ->size(TextColumnSize::ExtraSmall)
                     ->toggleable()
                     ->sortable()
                     ->label('ت.الخصم'),
                 Tables\Columns\TextColumn::make('ksm')
+                    ->size(TextColumnSize::ExtraSmall)
                     ->label('الخصم'),
                 Tables\Columns\TextColumn::make('ksm_type')
+                    ->size(TextColumnSize::ExtraSmall)
                     ->toggleable()
                     ->label('طريقة الدفع'),
-
-
                 Tables\Columns\TextColumn::make('kst_note')
                     ->toggleable()
+                    ->size(TextColumnSize::ExtraSmall)
                     ->label('ملاحظات'),
             ]);
     }

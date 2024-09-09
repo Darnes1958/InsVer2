@@ -1,47 +1,45 @@
-<x-filament-panels::page>
-  <div x-data class="flex w-full">
-      <div class="w-4/12">
-          {{$this->searchForm}}
+<x-filament-panels::page >
+    <div class="flush">
+        <div class="w-full" >
+            {{$this->searchForm}}
+        </div>
 
-              <x-filament::section collapsible>
-                  @livewire(\App\Livewire\Aksat\Rep\MainSearch::class)
-              </x-filament::section>
+        <div x-data class="flex w-full mt-2" >
+            <div class="w-4/12">
 
+                    @livewire(\App\Livewire\Aksat\Rep\MainSearch::class)
 
-
-              <x-filament::section collapsible  x-show="$wire.showArc" class="mt-2" >
-                  <x-slot name="heading"    >
+                <x-filament::section collapsible  x-show="$wire.showArc" class="mt-2" >
+                    <x-slot name="heading"    >
                         <span style="font-size: smaller;color: #00bb00"> عقود سابقة</span>
-                  </x-slot>
-                  @livewire(\App\Livewire\Aksat\Rep\ContArc::class)
-              </x-filament::section>
+                    </x-slot>
+                    @livewire(\App\Livewire\Aksat\Rep\ContArc::class)
+                </x-filament::section>
+            </div>
+            <div  class="w-4/12 mx-3 p-0">
+                <div x-show="$wire.showInfo">
+                    <x-filament::section>
+                        {{ $this->mainInfolist }}
+                    </x-filament::section>
+                    <div class="mt-2 pt-2">
+                        @livewire(\App\Livewire\Aksat\Rep\MainItem::class)
+                    </div>
+                </div>
 
+                <div x-show="$wire.showOver" class="mt-2">
+                    @livewire(\App\Livewire\Aksat\Rep\OverKst::class)
+                </div>
+                <div x-show="$wire.showTar" class="mt-2">
+                    @livewire(\App\Livewire\Aksat\Rep\TarKst::class)
+                </div>
 
+            </div>
+            <div  x-show="$wire.showInfo" class="w-4/12 mx-0 p-0">
+                @livewire(\App\Livewire\Aksat\Rep\KstTran::class)
+            </div>
+        </div>
+    </div>
 
-      </div>
-      <div    class="w-4/12 mx-3 p-0">
-          <div x-show="$wire.showInfo">
-              <x-filament::section>
-                  {{ $this->mainInfolist }}
-              </x-filament::section>
-
-              <div class="mt-2 pt-2">
-                  @livewire(\App\Livewire\Aksat\Rep\MainItem::class)
-              </div>
-          </div>
-
-          <div x-show="$wire.showOver" class="mt-2">
-              @livewire(\App\Livewire\Aksat\Rep\OverKst::class)
-          </div>
-          <div x-show="$wire.showTar" class="mt-2">
-              @livewire(\App\Livewire\Aksat\Rep\TarKst::class)
-          </div>
-
-      </div>
-      <div  x-show="$wire.showInfo" class="w-4/12 mx-0 p-0">
-          @livewire(\App\Livewire\Aksat\Rep\KstTran::class)
-      </div>
-  </div>
     <x-filament::modal id="mymainModal" slide-over width="6xl" sticky-header>
 
         <x-slot name="heading">

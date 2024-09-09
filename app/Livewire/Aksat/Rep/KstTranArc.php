@@ -39,21 +39,27 @@ class KstTranArc extends BaseWidget
                     ->action(function(kst_trans $record){
                         info($record->no);
                     })
+                    ->size(TextColumnSize::ExtraSmall)
                     ->color('primary')
                     ->sortable()
                     ->label('ت'),
                 Tables\Columns\TextColumn::make('kst_date')
                     ->toggleable()
+                    ->size(TextColumnSize::ExtraSmall)
                     ->sortable()
                     ->label('ت.الاستحقاق'),
                 Tables\Columns\TextColumn::make('ksm_date')
                     ->toggleable()
+                    ->size(TextColumnSize::ExtraSmall)
                     ->sortable()
+                    ->size(TextColumnSize::ExtraSmall)
                     ->label('ت.الخصم'),
                 Tables\Columns\TextColumn::make('ksm')
+                    ->size(TextColumnSize::ExtraSmall)
                     ->label('الخصم'),
                 Tables\Columns\TextColumn::make('ksm_type')
                     ->toggleable()
+                    ->size(TextColumnSize::ExtraSmall)
                     ->label('طريقة الدفع'),
 
 

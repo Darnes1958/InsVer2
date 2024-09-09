@@ -48,8 +48,7 @@ class MainSearch extends BaseWidget
     {
         return $table
             ->defaultSort('no','desc')
-            ->defaultPaginationPageOption(5)
-            ->paginationPageOptions([5,10,50])
+            ->paginated(false)
          //   ->defaultSort('no','desc')
             ->searchPlaceholder('بحث برقم الحساب او الاسم')
             ->queryStringIdentifier('MainSearch')
@@ -61,7 +60,8 @@ class MainSearch extends BaseWidget
                          $q->where('bank',$this->bank);
                       else
                           $q->whereIn('bank',bank::where('bank_tajmeeh',$this->bank)->pluck('bank_no'));
-              });
+              })
+                 ->limit(5);
 
 
              return $main;
