@@ -45,9 +45,11 @@ class Contract extends Page implements HasInfolists
     protected ?string $heading="";
 
     public $searchData;
+    public $kstData;
     public $infoData;
 
     public $no;
+
 
     public $bank;
     public $Taj;
@@ -57,6 +59,7 @@ class Contract extends Page implements HasInfolists
     public $showOver=false;
     public $showTar=false;
     public $showArc=false;
+    public $showCont=false;
     public $By=false;
 
     public $arcOver;
@@ -65,7 +68,8 @@ class Contract extends Page implements HasInfolists
     {
         $this->Main=Nmain::first();
         $this->Order_no=sells::find($this->Main->order_no);
-        $this->searchForm->fill(['By'=>$this->By,'WithKsm'=>true,]);
+        $this->searchForm->fill(['By'=>$this->By,]);
+        $this->kstForm->fill(['WithKsm'=>true,]);
     }
     #[On('ArcData')]
     public function ArcData($arcNo,$arcOver)
@@ -75,16 +79,9 @@ class Contract extends Page implements HasInfolists
     }
     #[On('showMe')]
     public function showMe($no){
-        $this->Main=Nmain::find($no);
-        $this->Order_no=sells::find($this->Main->order_no);
         $this->no=$no;
-        $this->searchForm->fill(['no'=>$no,'By'=>$this->By,'bank'=>$this->bank,'Taj'=>$this->Taj,'WithKsm'=>true]);
-        $this->showInfo=true;
-        $this->showOver= over_kst::where('no',$this->no)->exists();
-        $this->showTar= tar_kst::where('no',$this->no)->exists();
-        $this->showArc= MainArc::where('jeha',$this->Main->jeha)->exists();
+        $this->chkNo($no);
     }
-
 
 
   protected function getForms(): array
@@ -94,6 +91,10 @@ class Contract extends Page implements HasInfolists
         ->model(Nmain::class)
         ->schema($this->getsearchFormSchema())
         ->statePath('searchData'),
+        "kstForm" => $this->makeForm()
+            ->model(kst_trans::class)
+            ->schema($this->getkstFormSchema())
+            ->statePath('kstData'),
 
     ]);
   }
@@ -107,10 +108,13 @@ class Contract extends Page implements HasInfolists
           $this->showOver= over_kst::where('no',$this->no)->exists();
           $this->showTar= tar_kst::where('no',$this->no)->exists();
           $this->showArc= MainArc::where('jeha',$this->Main->jeha)->exists();
+          $this->showCont=main::where('jeha',$this->Main->jeha)->count()>1;
           $this->dispatch('MainItemOrder',order_no: $this->Main->order_no);
           $this->dispatch('OverKstNo',no: $this->no);
           $this->dispatch('TarKstNo',no: $this->no);
-          $this->dispatch('ContJeha',jeha: $this->Main->jeha);
+          $this->dispatch('ContJeha',jeha: $this->Main->jeha,no: $this->Main->no);
+          if ($this->showArc) $this->dispatch('changeLimit',limit: 5);
+          else $this->dispatch('changeLimit',limit: 10);
 
       } else $this->showInfo=false;
 
@@ -122,6 +126,34 @@ class Contract extends Page implements HasInfolists
       $this->no=null;
   }
 
+  protected function getkstFormSchema(): array
+  {
+      return [
+          Section::make()
+           ->schema([
+               Checkbox::make('WithKsm')
+                   ->label(new HtmlString('<span style="font-size: smaller">المخصومة فقط</span>'))
+                   ->visible(function (){return $this->showInfo;})
+                   ->live()
+                   ->afterStateUpdated(function ($state){
+                       $this->dispatch('TakeWithKsm',withksm: $state) ;
+                   })->columnSpan(2),
+               \Filament\Forms\Components\Actions::make([
+                   \Filament\Forms\Components\Actions\Action::make('add')
+                       ->label('اضافة')
+                       ->outlined()
+                       ->visible(function (){return $this->showInfo;})
+                       ->url(function (){
+                           //
+                       }),
+
+               ]),
+
+
+           ])
+          ->columns(4)
+      ];
+  }
   protected function getsearchFormSchema(): array
   {
     return [
@@ -179,14 +211,14 @@ class Contract extends Page implements HasInfolists
                \Filament\Forms\Components\Actions\Action::make('print1')
                    ->label('طباعة')
                    ->outlined()
-                   ->visible($this->showInfo)
+                   ->visible(function (){return $this->showInfo;})
                    ->url(function (){
                        if ($this->no) return route('pdfmain', $this->no);
                    }),
                \Filament\Forms\Components\Actions\Action::make('print2')
                    ->label('طباعة نموذج')
                    ->outlined()
-                   ->visible($this->showInfo)
+                   ->visible(function (){return $this->showInfo;})
                    ->url(function (){
                        if ($this->no) return route('pdfmaincont', $this->no);
                    }),
@@ -198,7 +230,7 @@ class Contract extends Page implements HasInfolists
                \Filament\Forms\Components\Actions\Action::make('toArchif')
                    ->label('نقل للأرشيف')
                    ->color('info')
-                   ->visible($this->showInfo && $this->Main->raseed<=0)
+                   ->visible(function (){return $this->showInfo && $this->Main->raseed<=0;})
                    ->outlined()
                    ->requiresConfirmation()
                    ->action(function (){
@@ -242,13 +274,6 @@ class Contract extends Page implements HasInfolists
                        }
                    }),
            ])->columnSpan(2) ,
-           Checkbox::make('WithKsm')
-               ->label(new HtmlString('<span style="font-size: smaller">المخصومة فقط</span>'))
-
-               ->live()
-               ->afterStateUpdated(function ($state){
-                   $this->dispatch('TakeWithKsm',withksm: $state) ;
-               }),
        ])
        ->columns(12)
           ->extraAttributes(['class' => 'flush'])
@@ -288,7 +313,7 @@ class Contract extends Page implements HasInfolists
                 TextEntry::make('bank.bank_name')
                     ->color('primary')
                     ->size(function (){
-                        if (strlen($this->Main->name)>40) return TextEntry\TextEntrySize::ExtraSmall;
+                        if (strlen($this->Main->name)>30) return TextEntry\TextEntrySize::ExtraSmall;
                         else return TextEntry\TextEntrySize::Small;
                     })
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])

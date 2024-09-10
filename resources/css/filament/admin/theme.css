@@ -8,7 +8,7 @@
     @apply gap-y-2;
 }
 .fi-section.flush .fi-section-content {
-    padding: 1px !important;
-    margin: 1px !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 @config 'tailwind.config.js';

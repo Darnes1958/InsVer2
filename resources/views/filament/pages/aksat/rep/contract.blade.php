@@ -9,7 +9,9 @@
 
                     @livewire(\App\Livewire\Aksat\Rep\MainSearch::class)
 
-
+                <div x-show="$wire.showCont" class="mt-2">
+                    @livewire(\App\Livewire\Aksat\Rep\Cont::class)
+                </div>
                     <div x-show="$wire.showArc" class="mt-2">
                         @livewire(\App\Livewire\Aksat\Rep\ContArc::class)
                     </div>
@@ -36,6 +38,10 @@
 
             </div>
             <div  x-show="$wire.showInfo" class="w-4/12 mx-0 p-0">
+                <div class="w-full" >
+                    {{$this->kstForm}}
+                </div>
+
                 @livewire(\App\Livewire\Aksat\Rep\KstTran::class)
             </div>
         </div>

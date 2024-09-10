@@ -21,6 +21,7 @@ class MainSearch extends BaseWidget
 
   public $theKey;
   public $bank;
+  public $limit=10;
   public $By=false;
   public $showSearch = true;
   protected static ?string $heading="";
@@ -32,7 +33,7 @@ class MainSearch extends BaseWidget
       $this->dispatch('MainItemOrder',order_no: $order_no);
       $this->dispatch('OverKstNo',no: $no);
       $this->dispatch('TarKstNo',no: $no);
-      $this->dispatch('ContJeha',jeha: $jeha);
+      $this->dispatch('ContJeha',jeha: $jeha,no: $no);
   }
     #[On('takeBank')]
     public function takeBank($bank,$by){
@@ -43,6 +44,8 @@ class MainSearch extends BaseWidget
     public function resetSearch(){
         $this->resetTable();
     }
+    #[On('changeLimit')]
+    public function changeLimit($limit){$this->limit=$limit;}
 
     public function table(Table $table): Table
     {
@@ -61,7 +64,7 @@ class MainSearch extends BaseWidget
                       else
                           $q->whereIn('bank',bank::where('bank_tajmeeh',$this->bank)->pluck('bank_no'));
               })
-                 ->limit(5);
+                 ->limit($this->limit);
 
 
              return $main;
