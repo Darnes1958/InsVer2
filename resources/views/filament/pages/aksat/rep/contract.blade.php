@@ -19,7 +19,7 @@
 
 
             </div>
-            <div  class="w-4/12 mx-3 p-0">
+            <div  class="w-4/12 mx-3 p-0 " >
                 <div x-show="$wire.showInfo">
                     <x-filament::section>
                         {{ $this->mainInfolist }}

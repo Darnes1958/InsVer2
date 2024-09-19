@@ -24,11 +24,13 @@ class TarKst extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading(new HtmlString('<span style="font-size: smaller;color: #00bb00">ترجيع مبالغ&nbsp;&nbsp;</span>'))
             ->emptyStateHeading('لا توجد بيانات')
             ->defaultPaginationPageOption(5)
             ->paginationPageOptions([5,10,15])
             ->defaultSort('tar_date')
+            ->paginated(function (){
+                return tar_kst::where('no',$this->no)->count()>5;
+            })
             ->query(function (tar_kst $main){
                 $main=tar_kst::where('no',$this->no);
                 return $main;
@@ -37,8 +39,8 @@ class TarKst extends BaseWidget
             ->columns([
                 Tables\Columns\TextColumn::make('ser')
                  ->rowIndex()
-                    ->size(TextColumnSize::ExtraSmall)
-                ->label('ت'),
+                 ->size(TextColumnSize::ExtraSmall)
+                 ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">ترجيع مبالغ&nbsp;&nbsp;</span>')),
                 Tables\Columns\TextColumn::make('tar_date')
                     ->size(TextColumnSize::ExtraSmall)
                     ->label('التاريخ'),

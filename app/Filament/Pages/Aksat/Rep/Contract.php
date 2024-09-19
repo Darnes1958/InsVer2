@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Aksat\Rep;
 
+use App\Enums\KsmType;
 use App\Livewire\Aksat\Rep\TarKst;
 use App\Models\aksat\kst_trans;
 use App\Models\aksat\main;
@@ -11,6 +12,7 @@ use App\Models\bank\BankTajmeehy;
 use App\Models\Customers;
 use App\Models\NewModel\Nmain;
 use App\Models\OverTar\over_kst;
+use App\Models\OverTar\stop_kst;
 use App\Models\OverTar\tar_kst;
 use App\Models\sell\rep_sell_tran;
 use App\Models\sell\sells;
@@ -20,8 +22,12 @@ use ArPHP\I18N\Arabic;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
+use Filament\Actions\Action;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -31,6 +37,8 @@ use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
@@ -137,15 +145,119 @@ class Contract extends Page implements HasInfolists
                    ->live()
                    ->afterStateUpdated(function ($state){
                        $this->dispatch('TakeWithKsm',withksm: $state) ;
-                   })->columnSpan(2),
-               \Filament\Forms\Components\Actions::make([
-                   \Filament\Forms\Components\Actions\Action::make('add')
-                       ->label('اضافة')
-                       ->outlined()
-                       ->visible(function (){return $this->showInfo;})
-                       ->url(function (){
-                           //
-                       }),
+                   })->columnSpan(3),
+               Actions::make([
+
+
+                   Actions\Action::make('ادخال_قسط')
+                       ->icon('heroicon-o-plus')
+                       ->iconButton()
+                       ->form([
+                           Section::make([
+                               Radio::make('ksm_type')
+                                   ->hiddenLabel()
+                                   ->inline()
+                                   ->columnSpan(2)
+                                   ->options(KsmType::class),
+                               DatePicker::make('ksm_date')
+                                   ->required()
+                                   ->label('التاريح'),
+                               TextInput::make('ksm')
+                                   ->required()
+                                   ->gt(0)
+                                   ->label('القسط'),
+                               TextInput::make('kst_notes')
+                                   ->columnSpan(2)
+                                   ->label('ملاحظات'),
+                           ]) ->columns(2)
+
+                       ])
+                       ->fillForm(function (){
+                           return [
+                               'ksm'=>$this->Main->kst,
+                               'ksm_date'=>date('Y-m-d'),
+                               'ksm_type'=>KsmType::المصرف,
+                           ];
+                       })
+                       ->modalCancelActionLabel('عودة')
+                       ->modalSubmitActionLabel('تحزين')
+                       ->modalHeading('ادخال قسط')
+                       ->action(function (array $data){
+                           $ksm=$data['ksm'];
+                           $over=0;
+
+                           if ($this->Main->raseed<=0) {
+                               $over=$ksm;
+                               $ksm=0;
+
+
+                           }
+
+                           if (($ksm>$this->Main->raseed) && ($this->Main->raseed>0)) {
+                               $ksm=$this->Main->raseed;
+                               $over=$ksm-$this->Main->raseed;
+                           }
+
+                           if ($ksm!=0){
+                                   $results=kst_trans::where('no',$this->no)->where(function ($query) {
+                                       $query->where('ksm', '=', null)
+                                           ->orWhere('ksm', '=', 0);
+                                   })->min('ser');
+                                   $ser= empty($results)? 0 : $results;
+
+                                   if ($ser!=0) {
+                                       kst_trans::where('no',$this->no)->where('ser',$ser)->update([
+                                           'ksm'=>$ksm,
+                                           'ksm_date'=>$data['ksm_date'],
+                                           'ksm_type'=>$data['ksm_type'],
+                                           'inp_date'=>date('Y-m-d'),
+                                           'kst_notes'=>$data['kst_notes'],
+                                           'emp'=>auth::user()->empno,
+                                       ]);
+
+                                   } else
+                                   {
+                                       $max=(kst_trans::where('no',$this->D_no)->max('ser'))+1;
+
+                                       DB::connection(Auth()->user()->company)->table('kst_trans')->insert([
+                                           'ser'=>$max,
+                                           'no'=>$this->no,
+                                           'kst_date'=>$data['ksm_date'],
+                                           'ksm_type'=>$data['ksm_type'],
+                                           'chk_no'=>0,
+                                           'kst'=>$this->kst,
+                                           'ksm_date'=>$data['ksm_date'],
+                                           'ksm'=>$ksm,
+                                           'kst_notes'=>$data['kst_notes'],
+                                           'inp_date'=>date('Y-m-d'),
+                                           'emp'=>auth::user()->empno,
+                                       ]);
+                                   }
+
+                               }
+
+                           if ($over!=0) {
+
+                                   over_kst::insert([
+                                       'no'=>$this->no,
+                                       'name'=>$this->Main->name,
+                                       'bank'=>$this->Main->bank,
+                                       'acc'=>$this->Main->acc,
+                                       'kst'=>$over,
+                                       'tar_type'=>1,
+                                       'tar_date'=>$data['ksm_date'],
+                                       'letters'=>0,
+                                       'emp'=>auth::user()->empno,
+                                   ]);
+                               }
+
+                           $sul_pay = kst_trans::where('no', $this->no)->where('ksm', '!=', null)->sum('ksm');
+                           $sul = main::where('no', $this->no)->first();
+                           $raseed = $sul->sul - $sul_pay;
+                           main::where('no', $this->no)->update(['sul_pay' => $sul_pay, 'raseed' => $raseed]);
+                           $this->dispatch('showMe',no: $this->no);
+                       })
+                       ->visible(function (){return $this->showInfo;}),
 
                ]),
 
@@ -206,33 +318,86 @@ class Contract extends Page implements HasInfolists
              $this->bank=null;
              $this->Taj=null;
              $this->By=$state;
-         }),
-           \Filament\Forms\Components\Actions::make([
-               \Filament\Forms\Components\Actions\Action::make('print1')
-                   ->label('طباعة')
-                   ->outlined()
+         })
+         ->extraAttributes(['style' => 'margin: 4px;']),
+           Actions::make([
+              Actions\Action::make('طباعة')
+                   ->iconButton()
+                   ->icon('heroicon-s-printer')
+                   ->color('primary')
                    ->visible(function (){return $this->showInfo;})
                    ->url(function (){
                        if ($this->no) return route('pdfmain', $this->no);
-                   }),
-               \Filament\Forms\Components\Actions\Action::make('print2')
-                   ->label('طباعة نموذج')
-                   ->outlined()
+                   })->extraAttributes(['style' => 'margin: 2px;']),
+               Actions\Action::make('طباعة_نموذج')
+                   ->iconButton()
+                   ->icon('heroicon-s-document')
+                   ->color('primary')
                    ->visible(function (){return $this->showInfo;})
                    ->url(function (){
                        if ($this->no) return route('pdfmaincont', $this->no);
                    }),
 
+
                ])
                ->columnSpan(2) ,
+           Actions::make([
+               Actions\Action::make('ايقاف')
+                   ->icon('heroicon-o-no-symbol')
+                   ->modalWidth(MaxWidth::Small)
+                   ->color('danger')
+                   ->visible(function () {return $this->Main->raseed<=0 && $this->showInfo
+                   && !stop_kst::where('no',$this->Main->no)->first();})
+                   ->iconButton()
+                   ->form([
+                       Section::make([
+                           DatePicker::make('stop_date')
+                               ->required()
+                               ->label('التاريح'),
+                       ])
+                   ])
+                   ->fillForm(function (){
+                       return [
+                           'stop_date'=>date('Y-m-d'),
+                       ];
+                   })
+                   ->modalCancelActionLabel('عودة')
+                   ->modalSubmitActionLabel('تحزين')
+                   ->modalHeading('رسالة ايقاف الخصم')
+                   ->extraAttributes(['style' => 'margin: 2px;'])
+                   ->action(function (array $data){
+                       stop_kst::on(Auth()->user()->company)->insert([
+                           'no'=>$this->no,'name'=>$this->Main->name,'bank'=>$this->Main->bank,
+                           'acc'=>$this->Main->acc,'stop_type'=>1,'stop_date'=>$data['stop_date'],
+                           'letters'=>0,'emp'=>auth::user()->empno,
+                       ]);
 
-           \Filament\Forms\Components\Actions::make([
-               \Filament\Forms\Components\Actions\Action::make('toArchif')
-                   ->label('نقل للأرشيف')
+                       $this->dispatch('showMe',no: $this->no);
+                   }),
+               Actions\Action::make('الغاء_الايقاف')
+                   ->link()
+                   ->tooltip('الغاء رسالة الايقاف')
+                   ->label('هذا العقد موقوف')
+                   ->icon('heroicon-o-no-symbol')
+                   ->color('danger')
+                   ->visible(function () {return $this->Main->raseed<=0 && $this->showInfo
+                       && stop_kst::where('no',$this->Main->no)->first();})
+
+                   ->extraAttributes(['style' => 'margin: 2px;'])
+                   ->requiresConfirmation()
+                   ->modalHeading('هل انت متأكد من الغاء رسالة الابقاف')
+                   ->action(function (array $data){
+                       stop_kst::where('no',$this->Main->no)->delete();
+                       $this->dispatch('showMe',no: $this->no);
+                   }),
+               Actions\Action::make('نقل_للأرشيف')
+                   ->icon('heroicon-s-archive-box-arrow-down')
+                   ->iconButton()
                    ->color('info')
                    ->visible(function (){return $this->showInfo && $this->Main->raseed<=0;})
                    ->outlined()
                    ->requiresConfirmation()
+                   ->extraAttributes(['style' => 'margin: 2px;'])
                    ->action(function (){
                        DB::connection(Auth()->user()->company)->beginTransaction();
                        try {
@@ -273,10 +438,11 @@ class Contract extends Page implements HasInfolists
                                ->send();
                        }
                    }),
-           ])->columnSpan(2) ,
+           ])->columnSpan(2),
+
        ])
        ->columns(12)
-          ->extraAttributes(['class' => 'flush'])
+       ->extraAttributes(['class' => 'flush'])
 
 
 

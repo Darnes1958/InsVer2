@@ -2,10 +2,18 @@
 
 namespace App\Livewire\Aksat\Rep;
 
+use App\Enums\KsmType;
 use App\Models\aksat\kst_trans;
 use App\Models\aksat\main;
+use App\Models\Family;
 use App\Models\Operations;
+use App\Models\Victim;
 use Carbon\Carbon;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables;
@@ -33,7 +41,6 @@ class KstTran extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-
             ->emptyStateHeading('لا توجد أقساط مخصومة')
             ->emptyStateDescription('لم يتم خصم أقساط بعد')
             ->defaultPaginationPageOption(12)
@@ -70,11 +77,10 @@ class KstTran extends BaseWidget
                     ->size(TextColumnSize::ExtraSmall)
                     ->toggleable()
                     ->label('طريقة الدفع'),
-                Tables\Columns\TextColumn::make('kst_note')
+                Tables\Columns\TextColumn::make('kst_notes')
                     ->toggleable()
                     ->size(TextColumnSize::ExtraSmall)
                     ->label('ملاحظات'),
-
             ])
             ->actions([
                 Tables\Actions\Action::make('del')
@@ -116,6 +122,42 @@ class KstTran extends BaseWidget
 
                     }),
                 Tables\Actions\Action::make('edit')
+                    ->form([
+                        Section::make([
+                            Radio::make('ksm_type')
+                             ->hiddenLabel()
+                             ->inline()
+                             ->columnSpan(2)
+                             ->options(KsmType::class),
+                            DatePicker::make('ksm_date')
+                                ->required()
+                                ->label('التاريح'),
+                            TextInput::make('ksm')
+                                ->required()
+                                ->gt(0)
+                                ->label('القسط'),
+                            TextInput::make('kst_notes')
+                                ->columnSpan(2)
+                                ->label('ملاحظات'),
+                        ]) ->columns(2)
+
+                    ])
+                    ->fillForm(fn (kst_trans $record): array => [
+                        'ksm_date' => $record->ksm_date,'ksm'=>$record->ksm,
+                        'kst_notes'=>$record->kst_notes,'ksm_type'=>$record->ksm_type,
+                    ])
+                    ->modalCancelActionLabel('عودة')
+                    ->modalSubmitActionLabel('تحزين')
+                    ->modalHeading('تعديل قسط')
+                    ->action(function (array $data,kst_trans $record,){
+                        $record->update(['ksm_date'=>$data['ksm_date'],'ksm'=>$data['ksm'],
+                            'kst_notes'=>$data['kst_notes'],'ksm_type'=>$data['ksm_type']]);
+                        $sul_pay = kst_trans::where('no', $this->no)->where('ksm', '!=', null)->sum('ksm');
+                        $sul = main::where('no', $this->no)->first();
+                        $raseed = $sul->sul - $sul_pay;
+                        main::where('no', $this->no)->update(['sul_pay' => $sul_pay, 'raseed' => $raseed]);
+                        $this->dispatch('showMe',no: $this->no);
+                    })
                     ->iconButton()
                     ->iconSize(IconSize::Small)
                     ->icon('heroicon-o-pencil')
@@ -123,9 +165,7 @@ class KstTran extends BaseWidget
                         return $record->ksm!=null && $record->ksm!=0;
                     })
                     ->color('blue')
-                    ->action(function (){
-                        //
-                    })
+
 
             ], position: Tables\Enums\ActionsPosition::BeforeColumns);
     }

@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect(route('filament.admin.auth.login'));
 });
 
 Route::controller(\App\Http\Controllers\RepAksatController::class)->group(function (){
