@@ -6,7 +6,9 @@ use App\Models\aksat\place;
 use App\Models\bank\bank;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
+
 
 class Nmain extends Model
 {
@@ -18,7 +20,7 @@ class Nmain extends Model
   public $incrementing = false;
   public $timestamps = false;
 
-  public function bank()
+  public function bank(): BelongsTo
   {
     return $this->belongsTo(bank::class, 'bank', 'bank_no');
 

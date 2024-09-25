@@ -2,6 +2,7 @@
 
 namespace App\Models\bank;
 
+use App\Models\aksat\main;
 use App\Models\NewModel\Nmain;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,10 @@ class bank extends Model
     public function Nmain()
     {
         return $this->hasMany(Nmain::class, 'bank', 'bank_no');
+    }
+    public function main()
+    {
+        return $this->hasMany(main::class, 'bank', 'bank_no');
     }
     public function __construct(array $attributes = [])
     {

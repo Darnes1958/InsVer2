@@ -17,7 +17,7 @@
     @endif
 
     <table  width="100%"   align="right" >
-      @if($Not_pay)
+      @if($Not_pay=='some')
        <caption style="font-size: 12pt; margin: 8px;">{{$month.'كشف بالعقود التي لم تسدد بعد حتي شهر ' }} </caption>
       @else
         <caption style="font-size: 12pt; margin: 8px;">{{$month.'كشف بالأقساط المستحقة والمتأخرة عن شهر ' }} </caption>

@@ -7,10 +7,10 @@ use Filament\Support\Contracts\HasColor;
 
 enum KsmType: int implements HasLabel,HasColor
 {
-  case نقدا = 0;
-  case المصرف = 1;
-  case صك = 2;
-  case الكنروني = 3;
+  case نقدا = 1;
+  case المصرف = 2;
+  case صك = 3;
+  case الكنروني = 4;
 
 
   public function getLabel(): ?string

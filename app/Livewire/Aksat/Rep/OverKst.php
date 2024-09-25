@@ -72,7 +72,8 @@ class OverKst extends BaseWidget
                     ->color('danger')
                     ->requiresConfirmation()
                     ->visible(function (Model $record){
-                        return $record->letters==0 ;
+                        return $record->letters==0 &&
+                            Auth::user()->can('ادخال فائض وترجيع');
                     })
                     ->action(function (Model $record){
                        $record->delete();
@@ -125,7 +126,8 @@ class OverKst extends BaseWidget
                     ->iconSize(IconSize::Small)
                     ->icon('heroicon-o-arrow-turn-down-left')
                     ->visible(function (Model $record){
-                        return $record->letters==0 ;
+                        return $record->letters==0 &&
+                            Auth::user()->can('ادخال فائض وترجيع');
                     })
 
                     ->color('blue')

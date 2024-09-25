@@ -90,7 +90,8 @@ class KstTran extends BaseWidget
                     ->color('danger')
                     ->requiresConfirmation()
                     ->visible(function (Model $record){
-                        return $record->ksm!=null && $record->ksm!=0;
+                        return $record->ksm!=null && $record->ksm!=0  &&
+                            Auth::user()->can('الغاء أقساط');
                     })
                     ->action(function (Model $record){
                         DB::connection(Auth()->user()->company)->beginTransaction();
@@ -113,7 +114,7 @@ class KstTran extends BaseWidget
 
                         } catch (\Exception $e) {
                             DB::connection(Auth()->user()->company)->rollback();
-
+                            info($e);
                             Notification::make()
                                 ->title('حدث خطأ !!')
                                 ->danger()
@@ -162,7 +163,8 @@ class KstTran extends BaseWidget
                     ->iconSize(IconSize::Small)
                     ->icon('heroicon-o-pencil')
                     ->visible(function (Model $record){
-                        return $record->ksm!=null && $record->ksm!=0;
+                        return $record->ksm!=null && $record->ksm!=0 &&
+                            Auth::user()->canany(['ادخال أقساط','ادخال حوافظ']);
                     })
                     ->color('blue')
 

@@ -50,7 +50,13 @@ class Contract extends Page implements HasInfolists
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.aksat.rep.contract';
+    protected static ?string $navigationLabel='استفسار وتعديل بيانات عقود';
     protected ?string $heading="";
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('استفسار عقود فقط');
+    }
 
     public $searchData;
     public $kstData;
@@ -147,8 +153,6 @@ class Contract extends Page implements HasInfolists
                        $this->dispatch('TakeWithKsm',withksm: $state) ;
                    })->columnSpan(3),
                Actions::make([
-
-
                    Actions\Action::make('ادخال_قسط')
                        ->icon('heroicon-o-plus')
                        ->iconButton()
@@ -257,7 +261,7 @@ class Contract extends Page implements HasInfolists
                            main::where('no', $this->no)->update(['sul_pay' => $sul_pay, 'raseed' => $raseed]);
                            $this->dispatch('showMe',no: $this->no);
                        })
-                       ->visible(function (){return $this->showInfo;}),
+                       ->visible(function (){return Auth::user()->canany(['ادخال أقساط','ادخال حوافظ']) && $this->showInfo ;}),
 
                ]),
 
@@ -347,7 +351,8 @@ class Contract extends Page implements HasInfolists
                    ->modalWidth(MaxWidth::Small)
                    ->color('danger')
                    ->visible(function () {return $this->Main->raseed<=0 && $this->showInfo
-                   && !stop_kst::where('no',$this->Main->no)->first();})
+                   && !stop_kst::where('no',$this->Main->no)->first() &&
+                       Auth::user()->can('ادخال فائض وترجيع');})
                    ->iconButton()
                    ->form([
                        Section::make([
@@ -381,7 +386,8 @@ class Contract extends Page implements HasInfolists
                    ->icon('heroicon-o-no-symbol')
                    ->color('danger')
                    ->visible(function () {return $this->Main->raseed<=0 && $this->showInfo
-                       && stop_kst::where('no',$this->Main->no)->first();})
+                       && stop_kst::where('no',$this->Main->no)->first() &&
+                       Auth::user()->can('ادخال فائض وترجيع');})
 
                    ->extraAttributes(['style' => 'margin: 2px;'])
                    ->requiresConfirmation()
@@ -394,7 +400,8 @@ class Contract extends Page implements HasInfolists
                    ->icon('heroicon-s-archive-box-arrow-down')
                    ->iconButton()
                    ->color('info')
-                   ->visible(function (){return $this->showInfo && $this->Main->raseed<=0;})
+                   ->visible(function (){return $this->showInfo && $this->Main->raseed<=0 &&
+                       Auth::user()->can('ادخال عقود');})
                    ->outlined()
                    ->requiresConfirmation()
                    ->extraAttributes(['style' => 'margin: 2px;'])

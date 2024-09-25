@@ -6,12 +6,20 @@
 
   <div >
     <label style="font-size: 10pt;">{{$bank_name}}</label>
-    <label style="font-size: 12pt;margin-right: 12px;" >المصرف : </label>
+      @if($By=='Bank')
+          <label style="font-size: 12pt;margin-right: 12px;" >فرع المصرف : </label>
+      @else
+          <label style="font-size: 12pt;margin-right: 12px;" >المصرف التجميعي : </label>
+      @endif
+
   </div>
 
 
-  <table     >
-    <caption style="font-size: 12pt; margin: 8px;">{{'كشف بالعقود القائمة حتي تاريخ '.$RepDate }} </caption>
+  <table>
+      @if($from=='main') <caption style="font-size: 12pt; margin: 8px;">{{ 'كشف بالعقود القائمة حتي تاريخ '.$RepDate}} </caption>
+      @else <caption style="font-size: 12pt; margin: 8px;">{{ 'كشف بالعقود (الأرشيف) حتي تاريخ '.$RepDate}} </caption>
+      @endif
+
     <thead style=" font-family: DejaVu Sans, sans-serif; margin-top: 8px;" >
     <tr  style="background: #9dc1d3;" >
 
