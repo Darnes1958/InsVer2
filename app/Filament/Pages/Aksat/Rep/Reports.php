@@ -246,7 +246,8 @@ class Reports extends Page implements HasForms,HasTable
                 return $res;
             }
             )
-            ->paginationPageOptions([5,10,25,50,100])
+            ->paginated([5,10, 25, 50, 100])
+            ->defaultPaginationPageOption(10)
             ->emptyStateHeading('لا توجد بيانات')
             ->defaultSort('no')
             ->bulkActions([
@@ -303,7 +304,9 @@ class Reports extends Page implements HasForms,HasTable
             ])
 
             ->columns([
-
+                TextColumn::make('ser')
+                    ->rowIndex()
+                    ->label('ت'),
                 TextColumn::make('no')
                     ->label('رقم العفد')
                     ->sortable()

@@ -127,7 +127,7 @@ trait reportTrait
 
         if ($khamlaType=='all') {
 
-            $first=main_trans_view2::
+            $second=main_trans_view2::
             selectRaw('no,name,sul_date,sul,sul_pay,raseed,kst,bank_name,acc,order_no,max(ksm_date) as ksm_date')
                 ->when($By=='Bank',function($q) use($bank_no){
                     $q->where('bank', '=', $bank_no);
@@ -145,25 +145,7 @@ trait reportTrait
                         ->where('emp',Auth::user()->empno);
                 })
                 ->groupBy('no','name','sul_date','sul','sul_pay','raseed','kst','bank_name','acc','order_no');
-            $second=main_view::
-            selectraw('no,name,sul_date,sul,sul_pay,raseed,kst,bank_name,acc,order_no,null as ksm_date')
-                ->when($By=='Bank',function($q) use($bank_no){
-                    $q->where('bank', '=', $bank_no);
-                })
-                ->when($By=='Taj',function($q) use($TajNo){
-                    $q-> whereIn('bank', function($q) use($TajNo){
-                        $q->select('bank_no')->from('bank')->where('bank_tajmeeh',$TajNo);});
-                })
-
-                ->where('sul_pay',0)
-
-                ->whereExists(function ($query) {
-                    $query->select(DB::raw(1))
-                        ->from('late')
-                        ->whereColumn('main_view.no', 'late.no')
-                        ->where('emp',Auth::user()->empno);
-                })
-                ->union($first) ; }
+             }
 
         if ($khamlaType=='some'){
 
