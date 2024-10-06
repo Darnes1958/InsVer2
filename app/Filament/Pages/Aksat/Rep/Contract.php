@@ -221,7 +221,7 @@ class Contract extends Page implements HasInfolists
 
                                    } else
                                    {
-                                       $max=(kst_trans::where('no',$this->D_no)->max('ser'))+1;
+                                       $max=(kst_trans::where('no',$this->no)->max('ser'))+1;
 
                                        DB::connection(Auth()->user()->company)->table('kst_trans')->insert([
                                            'ser'=>$max,
@@ -229,7 +229,7 @@ class Contract extends Page implements HasInfolists
                                            'kst_date'=>$data['ksm_date'],
                                            'ksm_type'=>$data['ksm_type'],
                                            'chk_no'=>0,
-                                           'kst'=>$this->kst,
+                                           'kst'=>$ksm,
                                            'ksm_date'=>$data['ksm_date'],
                                            'ksm'=>$ksm,
                                            'kst_notes'=>$data['kst_notes'],
