@@ -6,7 +6,9 @@ use App\Exports\KhamlaXls;
 use App\Exports\Khasf;
 use App\Exports\MosdadaXls;
 use App\Exports\Motakra;
+use App\Livewire\TestPrint;
 use App\Models\aksat\kst_trans;
+use App\Models\aksat\main_view;
 use App\Models\aksat\MainArc;
 use App\Models\OverTar\over_kst;
 use App\Models\OverTar\stop_kst;
@@ -22,6 +24,7 @@ use ArPHP\I18N\Arabic;
 
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -29,6 +32,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -37,8 +41,10 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use mysql_xdevapi\Result;
 
 
 class Reports extends Page implements HasForms,HasTable
@@ -51,6 +57,8 @@ class Reports extends Page implements HasForms,HasTable
     protected static ?string $navigationLabel='تقارير عقود';
     protected ?string $heading='';
 
+
+    public $theresult;
     public $bankData;
 
     public $bank=0;
@@ -176,6 +184,8 @@ class Reports extends Page implements HasForms,HasTable
                             'all'=>'كل العقود',
                             'some'=>'لم تسدد بعد'
                         ]),
+
+                    Livewire::make(TestPrint::class),
                     Actions::make([
                         Actions\Action::make('print')
                             ->iconButton()
@@ -200,16 +210,18 @@ class Reports extends Page implements HasForms,HasTable
                             })
                             ->color('blue')
                             ->icon('heroicon-o-printer'),
+
                         Actions\Action::make('اكسل')
                             ->hidden(function (){return $this->bank==0 && $this->taj==0 ;})
                             ->action(function (){
+                                $res=$this->retkhasf($this->bank,$this->taj,$this->By,$this->from);
                                 $bank_name=' ';
                                 if ($this->By=='Bank') $bank_name=bank::find($this->bank)->bank_name;
                                 if ($this->By=='taj') $bank_name=BankTajmeehy::find($this->taj)->TajName;
                                 if ($this->repName=='mosdada')
                                    return Excel::download(new MosdadaXls($this->By,$this->taj,$this->bank,$this->baky,$bank_name), 'Mosdada.xlsx');
                                 if ($this->repName=='khasf')
-                                    return Excel::download(new Khasf($this->By,$this->taj,$this->bank,$this->from), 'Khasf.xlsx');
+                                    return Excel::download(new Khasf($this->By,$this->taj,$this->bank,$this->from,$res->get()), 'Khasf.xlsx');
 
                                 if ($this->repName=='khamla')
                                    return Excel::download(new KhamlaXls($this->By,$this->taj,$this->bank,$this->months,$this->khamlaType,$bank_name), 'Khamla.xlsx');
@@ -233,24 +245,68 @@ class Reports extends Page implements HasForms,HasTable
 
     }
 
+    public  function convertToArabic($html, int $line_length = 100, bool $hindo = false, $forcertl = false): string
+    {
+        $Arabic = new \ArPHP\I18N\Arabic();
+        $p = $Arabic->arIdentify($html);
+
+        for ($i = count($p) - 1; $i >= 0; $i -= 2) {
+            $utf8ar = $Arabic->utf8Glyphs(substr($html, $p[$i - 1], $p[$i] - $p[$i - 1]), $line_length, $hindo, $forcertl);
+            $html   = substr_replace($html, $utf8ar, $p[$i - 1], $p[$i] - $p[$i - 1]);
+        }
+
+        return $html;
+    }
+
     public function table(Table $table): Table
     {
         return $table
             ->query(function (){
-               if ($this->bank==0 && $this->taj==0 ) $res= null;
-                if ($this->repName=='mosdada') {$res=$this->retMosdada($this->bank,$this->taj,$this->By,$this->baky);}
-                if ($this->repName=='khamla') {$res=$this->retKhamal($this->bank,$this->taj,$this->By,$this->months,$this->khamlaType);}
-                if ($this->repName=='motakra') {$res=$this->retMotakra($this->bank,$this->taj,$this->By,$this->khamlaType);}
-                if ($this->repName=='khasf') {$res=$this->retkhasf($this->bank,$this->taj,$this->By,$this->from);}
+               if ($this->bank==0 && $this->taj==0 ) $theresult= null;
+                if ($this->repName=='mosdada') {$theresult=$this->retMosdada($this->bank,$this->taj,$this->By,$this->baky);}
+                if ($this->repName=='khamla') {$theresult=$this->retKhamal($this->bank,$this->taj,$this->By,$this->months,$this->khamlaType);}
+                if ($this->repName=='motakra') {$theresult=$this->retMotakra($this->bank,$this->taj,$this->By,$this->khamlaType);}
+                if ($this->repName=='khasf') {$theresult=$this->retkhasf($this->bank,$this->taj,$this->By,$this->from);}
 
-                return $res;
+                return $theresult;
             }
             )
             ->paginated([5,10, 25, 50, 100])
             ->defaultPaginationPageOption(10)
             ->emptyStateHeading('لا توجد بيانات')
             ->defaultSort('no')
+            ->headerActions([
+                Action::make('pdf')
+                    ->label('PDFabove')
+                    ->color('success')
+                    ->action(function () {
+                        $RepDate=date('Y-m-d');
+                        $cus=Customers::where('Company',Auth::user()->company)->first();
+
+                        $reportHtml = view('PrnView.aksat.pdf-khasf',
+                            ['res'=>$this->getTableQueryForExport()->get(),
+                                'cus'=>$cus,'bank_name'=>'any name','RepDate'=>$RepDate,
+                                'By'=>'Bank','from'=>$this->from])->render();
+                        $reportHtml=$this->convertToArabic($reportHtml);
+
+                        return response()->streamDownload(function () use ($reportHtml) {
+                            echo Pdf::loadHtml($reportHtml)->stream();
+                        },  'any.pdf');
+                    }),
+            ])
             ->bulkActions([
+                BulkAction::make('excel')
+                    ->visible(function (){return $this->repName=='khasf';})
+                    ->deselectRecordsAfterCompletion()
+                    ->button()
+                    ->color('success')
+                    ->icon('heroicon-o-no-symbol')
+                    ->label('excel')
+                    ->action(function (Collection $records)  {
+                        if ($this->repName=='khasf')
+                            return Excel::download(new Khasf($this->By,$this->taj,$this->bank,$this->from,$records), 'Khasf.xlsx');
+
+                    }),
                 BulkAction::make('toStop')
                     ->visible(function (){return $this->repName=='mosdada';})
                     ->deselectRecordsAfterCompletion()
@@ -303,6 +359,9 @@ class Reports extends Page implements HasForms,HasTable
                     })
             ])
 
+            ->actions([
+
+            ])
             ->columns([
                 TextColumn::make('ser')
                     ->rowIndex()

@@ -34,11 +34,14 @@ class Khasf  implements FromCollection,WithMapping, WithHeadings,
     public $kst;
     public $name;
     public $title;
+    private $data;
     /**
      * @return array
      */
-    public function __construct(string $ByTjmeehy,int $TajNo, int $bank,string $from)
+    public function __construct(string $ByTjmeehy,int $TajNo, int $bank,string $from,$data)
 {
+    $this->data=$data;
+
     $this->bank = $bank;
     $this->ByTajmeehy=$ByTjmeehy;
     $this->TajNo=$TajNo;
@@ -178,58 +181,11 @@ class Khasf  implements FromCollection,WithMapping, WithHeadings,
 
     public function collection()
     {
-        if ($this->from=='main') {
-            $res = main::
-            when($this->ByTajmeehy == 'Bank', function ($q) {
-                $q->where('bank', '=', $this->bank);
-            })
-                ->when($this->ByTajmeehy == 'Taj', function ($q) {
-                    $q->whereIn('bank', function ($q) {
-                        $q->select('bank_no')->from('bank')->where('bank_tajmeeh', $this->TajNo);
-                    });
-                })
-                ->selectRaw('count(*) as count,sum(sul) as sul,sum(sul_pay) as sul_pay,sum(raseed) raseed')->first();
-            $this->rowcount=$res->count;
-            $this->sul=$res->sul;
-            $this->sul_pay=$res->sul_pay;
-            $this->raseed=$res->raseed;
-            return main::
-            when($this->ByTajmeehy == 'Bank', function ($q) {
-                $q->where('bank', '=', $this->bank);
-            })
-                ->when($this->ByTajmeehy == 'Taj', function ($q) {
-                    $q->whereIn('bank', function ($q) {
-                        $q->select('bank_no')->from('bank')->where('bank_tajmeeh', $this->TajNo);
-                    });
-                })
-                ->get();
-        } else
-             {
-                $res = MainArc::
-                when($this->ByTajmeehy == 'Bank', function ($q) {
-                    $q->where('bank', '=', $this->bank);
-                })
-                    ->when($this->ByTajmeehy == 'Taj', function ($q) {
-                        $q->whereIn('bank', function ($q) {
-                            $q->select('bank_no')->from('bank')->where('bank_tajmeeh', $this->TajNo);
-                        });
-                    })
-                    ->selectRaw('count(*) as count,sum(sul) as sul,sum(sul_pay) as sul_pay,sum(raseed) raseed')->first();
-                 $this->rowcount=$res->count;
-                 $this->sul=$res->sul;
-                 $this->sul_pay=$res->sul_pay;
-                 $this->raseed=$res->raseed;
-                return MainArc::
-                when($this->ByTajmeehy == 'Bank', function ($q) {
-                    $q->where('bank', '=', $this->bank);
-                })
-                    ->when($this->ByTajmeehy == 'Taj', function ($q) {
-                        $q->whereIn('bank', function ($q) {
-                            $q->select('bank_no')->from('bank')->where('bank_tajmeeh', $this->TajNo);
-                        });
-                    })
-                    ->get();
-            }
-        }
+
+
+        return $this->data;
+
+
+    }
 
 }

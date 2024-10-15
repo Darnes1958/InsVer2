@@ -72,8 +72,8 @@ trait reportTrait
                 $q-> whereIn('bank', function($q) use ($TajNo){
                     $q->select('bank_no')->from('bank')->where('bank_tajmeeh',$TajNo);});
             })
-            ->where('raseed','<=',$baky)
-        ;
+            ->where('raseed','<=',$baky);
+
         return $main;
     }
     public function retkhasf($bank_no,$TajNo,$By,$from)
