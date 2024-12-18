@@ -36,6 +36,7 @@ class Login extends \Filament\Pages\Auth\Login
     {
         return TextInput::make('CompCode')
             ->label('كود الشركة')
+            ->numeric()
             ->required()
             ->autocomplete()
             ->autofocus()
@@ -45,6 +46,7 @@ class Login extends \Filament\Pages\Auth\Login
     {
         return TextInput::make('id')
             ->label('رقم المستخدم')
+            ->numeric()
             ->required()
             ->autocomplete()
             ->autofocus()

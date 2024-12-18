@@ -185,7 +185,6 @@ class Reports extends Page implements HasForms,HasTable
                             'some'=>'لم تسدد بعد'
                         ]),
 
-                    Livewire::make(TestPrint::class),
                     Actions::make([
                         Actions\Action::make('print')
                             ->iconButton()
@@ -275,25 +274,7 @@ class Reports extends Page implements HasForms,HasTable
             ->defaultPaginationPageOption(10)
             ->emptyStateHeading('لا توجد بيانات')
             ->defaultSort('no')
-            ->headerActions([
-                Action::make('pdf')
-                    ->label('PDFabove')
-                    ->color('success')
-                    ->action(function () {
-                        $RepDate=date('Y-m-d');
-                        $cus=Customers::where('Company',Auth::user()->company)->first();
 
-                        $reportHtml = view('PrnView.aksat.pdf-khasf',
-                            ['res'=>$this->getTableQueryForExport()->get(),
-                                'cus'=>$cus,'bank_name'=>'any name','RepDate'=>$RepDate,
-                                'By'=>'Bank','from'=>$this->from])->render();
-                        $reportHtml=$this->convertToArabic($reportHtml);
-
-                        return response()->streamDownload(function () use ($reportHtml) {
-                            echo Pdf::loadHtml($reportHtml)->stream();
-                        },  'any.pdf');
-                    }),
-            ])
             ->bulkActions([
                 BulkAction::make('excel')
                     ->visible(function (){return $this->repName=='khasf';})

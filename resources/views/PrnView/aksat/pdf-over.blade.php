@@ -1,63 +1,63 @@
-@extends('PrnView.PrnMaster')
+@extends('PrnView.PrnMaster3')
 
 @section('mainrep')
 
 
 
   <div >
-    <label style="font-size: 10pt;">{{$bank_name}}</label>
-    <label style="font-size: 14pt;margin-right: 12px;" >المصرف : </label>
+      <label style="font-size: 14pt;" >المصرف : </label>
+      <label style="font-size: 10pt;">{{$arr['bank_name']}}</label>
   </div>
 
 
-  <table  width="100%"   align="right" >
-    @if($Table=='over_kst')
-      @if($letters=='0')
-       <caption style="font-size: 12pt; margin: 8px;">{{'الأقساط المخصومة بالفائض والغير مرحلة من تاريخ '.$over_date1.' من إلي تاريخ  '.$over_date2 }} </caption>
+  <table  width="90%" >
+    @if($arr['Table']=='over_kst')
+      @if($arr['letters']==0)
+       <caption style="font-size: 12pt; margin: 8px;">{{'الأقساط المخصومة بالفائض والغير مرحلة '.$arr['date'] }} </caption>
       @else
-        <caption style="font-size: 12pt; margin: 8px;">{{'الأقساط المخصومة بالفائض والمرحلة من تاريخ '.$over_date1.' من إلي تاريخ  '.$over_date2 }} </caption>
+        <caption style="font-size: 12pt; margin: 8px;">{{'الأقساط المخصومة بالفائض والمرحلة '.$arr['date'] }} </caption>
       @endif
     @else
-      @if($letters=='0')
-        <caption style="font-size: 12pt; margin: 8px;">{{'الأقساط المخصومة بالفائض من الارشيف والغير مرحلة من تاريخ '.$over_date1.' من إلي تاريخ  '.$over_date2 }} </caption>
+      @if($arr['letters']==0)
+        <caption style="font-size: 12pt; margin: 8px;">{{'الأقساط المخصومة بالفائض من الارشيف والغير مرحلة '.$arr['date'] }} </caption>
       @else
-        <caption style="font-size: 12pt; margin: 8px;">{{'الأقساط المخصومة بالفائض من الارشيف والمرحلة من تاريخ '.$over_date1.' من إلي تاريخ  '.$over_date2 }} </caption>
+        <caption style="font-size: 12pt; margin: 8px;">{{'الأقساط المخصومة بالفائض من الارشيف والمرحلة '.$arr['date'] }} </caption>
       @endif
     @endif
     <thead style=" font-family: DejaVu Sans, sans-serif; margin-top: 8px;" >
     <tr  style="background: #9dc1d3;" >
-      <th style="width: 14%">المبلغ</th>
-      <th style="width: 14%">التاريخ</th>
-      <th >الاسم</th>
-      <th style="width: 20%">رقم الحساب</th>
-      <th style="width: 10%"> الرقم الألي</th>
+        <th style="width: 10%"> الرقم الألي</th>
+        <th style="width: 10%">رقم العقد</th>
+        <th style="width: 20%">رقم الحساب</th>
+        <th >الاسم</th>
+        <th style="width: 12%">التاريخ</th>
+        <th style="width: 12%">المبلغ</th>
     </tr>
     </thead>
     <tbody style="margin-bottom: 40px; ">
     @php $sumval=0 @endphp
     @foreach($res as $key => $item)
       <tr >
-        <td> {{ $item->kst }} </td>
-        <td style="text-align: center;"> {{ $item->tar_date }} </td>
-        <td> {{ $item->name }} </td>
-        <td > {{ $item->acc }} </td>
-        <td> {{ $item->wrec_no }} </td>
+          <td> {{ $item->wrec_no }} </td>
+          <td> {{ $item->no }} </td>
+          <td style="text-align: center"> {{ $item->acc }} </td>
+          <td> {{ $item->name }} </td>
+          <td style="text-align: center;"> {{ $item->tar_date }} </td>
+          <td> {{ $item->kst }} </td>
+
       </tr>
-      <div id="footer" style="height: 50px; width: 100%; margin-bottom: 0px; margin-top: 10px;
-                              display: flex;  justify-content: center;">
-        <label class="page"></label>
-        <label> صفحة رقم </label>
-      </div>
+
       @php $sumval+=$item->kst; @endphp
     @endforeach
     <tr class="font-size-12 " style="font-weight: bold">
-      <td> {{number_format($sumval, 2, '.', ',')}} </td>
-      <td>   </td>
-      <td>   </td>
-      <td>   </td>
-      <td style="font-weight:normal;">الإجمــــــــالي  </td>
-    </tr>
 
+        <td style="font-weight:normal;">الإجمــــــــالي  </td>
+      <td>   </td>
+      <td>   </td>
+      <td>   </td>
+        <td>   </td>
+        <td> {{number_format($sumval, 2, '.', ',')}} </td>
+    </tr>
 
     </tbody>
 

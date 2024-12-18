@@ -5,9 +5,9 @@ namespace App\Livewire\Aksat\Rep;
 use App\Enums\KsmType;
 use App\Models\aksat\kst_trans;
 use App\Models\aksat\main;
-use App\Models\Family;
+
 use App\Models\Operations;
-use App\Models\Victim;
+
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Radio;
@@ -20,13 +20,25 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 
+
+use Illuminate\Database\Eloquent\Builder;
+
+use Filament\Tables\Concerns\CanPaginateRecords;
+
+
+
+
+
 class KstTran extends BaseWidget
 {
+
     public $no;
     public $WithKsm=True;
     protected static ?string $heading="";
@@ -38,13 +50,14 @@ class KstTran extends BaseWidget
     public function TakeWithKsm($withksm){
         $this->WithKsm=$withksm;
     }
+
     public function table(Table $table): Table
     {
         return $table
             ->emptyStateHeading('لا توجد أقساط مخصومة')
             ->emptyStateDescription('لم يتم خصم أقساط بعد')
             ->defaultPaginationPageOption(12)
-            ->paginationPageOptions([5,12,15,50])
+            ->paginationPageOptions([5,12,15,50,'all'])
             ->defaultSort('ser')
             ->query(function (kst_trans $main){
                 $main=kst_trans::where('no',$this->no)
@@ -170,5 +183,18 @@ class KstTran extends BaseWidget
 
 
             ], position: Tables\Enums\ActionsPosition::BeforeColumns);
+    }
+
+    protected function paginateTableQuery(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Contracts\Pagination\Paginator
+    {
+        $perPage = $this->getTableRecordsPerPage();
+
+        $records = $query->paginate(
+            $perPage === 'all' ? $query->count() : $perPage,
+            ['*'],
+            $this->getTablePaginationPageName(),
+        );
+
+        return $records->onEachSide(0);
     }
 }

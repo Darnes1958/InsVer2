@@ -52,8 +52,9 @@ class OverKst extends BaseWidget
             })
             ->queryStringIdentifier('OverKst')
             ->columns([
-                Tables\Columns\TextColumn::make('ser')
-                    ->rowIndex()
+                Tables\Columns\TextColumn::make('status')
+                    ->state(fn(Model $record): string=> $record->letters==1?'مرجع':'غيرمرجع')
+                    ->color(fn(Model $record): string=> $record->letters==1?'primary':'info')
                     ->size(TextColumnSize::ExtraSmall)
                     ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">خصم بالفائض&nbsp;&nbsp;</span>')),
                 Tables\Columns\TextColumn::make('tar_date')
