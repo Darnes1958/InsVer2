@@ -24,6 +24,7 @@ use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use NunoMaduro\Collision\Adapters\Phpunit\State;
 
@@ -40,7 +41,10 @@ class OverRep extends Page implements HasForms,HasTable
     protected static ?int $navigationSort=5;
     protected ?string $heading='الخصم بالفائض';
 
-
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('فائض وترجيع');
+    }
     public $By='taj';
     public $letters=0;
     public $bank_id;

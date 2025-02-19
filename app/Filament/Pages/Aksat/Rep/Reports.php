@@ -56,7 +56,10 @@ class Reports extends Page implements HasForms,HasTable
     protected static string $view = 'filament.pages.aksat.rep.reports';
     protected static ?string $navigationLabel='تقارير عقود';
     protected ?string $heading='';
-
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('عقود');
+    }
 
     public $theresult;
     public $bankData;
