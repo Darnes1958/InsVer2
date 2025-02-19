@@ -29,7 +29,7 @@ class MainArcModal extends Page implements HasInfolists
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('استفسار عقود فقط');
+        return false;
     }
     public $no;
     public  $Main;
