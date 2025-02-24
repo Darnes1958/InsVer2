@@ -10,6 +10,8 @@ use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
 use App\Models\OverTar\over_kst;
 use App\Models\OverTar\over_kst_a;
+use App\Models\OverTar\stop_kst;
+use App\Models\OverTar\tar_kst;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -18,13 +20,16 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use NunoMaduro\Collision\Adapters\Phpunit\State;
@@ -139,6 +144,7 @@ class OverArcRep extends Page implements HasForms,HasTable
                     })
                     ;
             })
+            ->defaultSort('tar_date','desc')
             ->striped()
             ->pluralModelLabel('الفائض')
             ->columns([
@@ -158,8 +164,37 @@ class OverArcRep extends Page implements HasForms,HasTable
                             decimalSeparator: '.',
                             thousandsSeparator: ',',
                         ),
-            ]
+            ])
+            ->actions([
+                \Filament\Tables\Actions\Action::make('tar')
+                    ->label('ترجيع')
+                ->visible(function ($record){return $record->letters==0;})
+                ->requiresConfirmation()
+                ->action(function ($record){
+                  tar_kst::create(['no'=>$record->no,'name'=>$record->name,'bank'=>$record->bank,
+                      'acc'=>$record->acc,'tar_date'=>now(),'kst'=>$record->kst,'tar_type'=>2,'inp_date'=>now()]);
+                  $record->letters=1;
+                  $record->save();
+                })
 
-            );
+            ])
+            ->bulkActions([
+                BulkAction::make('toTar')
+                    ->visible(function (){return $this->letters==0;})
+                    ->deselectRecordsAfterCompletion()
+                    ->requiresConfirmation()
+                    ->button()
+                    ->color('success')
+                    ->icon('heroicon-o-arrow-left')
+                    ->label('ترجيع')
+                    ->action(function (Collection $records)  {
+                        foreach ($records as $record) {
+                            tar_kst::create(['no'=>$record->no,'name'=>$record->name,'bank'=>$record->bank,
+                                'acc'=>$record->acc,'tar_date'=>now(),'kst'=>$record->kst,'tar_type'=>2,'inp_date'=>now()]);
+                            $record->letters=1;
+                            $record->save();
+                        }
+                    }),
+            ]);
     }
 }

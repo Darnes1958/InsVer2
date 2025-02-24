@@ -343,9 +343,7 @@ class Reports extends Page implements HasForms,HasTable
                     })
             ])
 
-            ->actions([
 
-            ])
             ->columns([
                 TextColumn::make('ser')
                     ->rowIndex()

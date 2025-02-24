@@ -43,9 +43,8 @@ class TarKst extends BaseWidget
             })
             ->queryStringIdentifier('TraKst')
             ->columns([
-                Tables\Columns\TextColumn::make('status')
-                    ->state(fn(Model $record): string=> $record->tar_type==1?'من الفائض':'من خصم')
-                    ->color(fn(Model $record): string=> $record->letters==1?'primary':'info')
+                Tables\Columns\TextColumn::make('tar_type')
+
                     ->size(TextColumnSize::ExtraSmall)
                     ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">ترجيع مبالغ&nbsp;&nbsp;</span>')),
 

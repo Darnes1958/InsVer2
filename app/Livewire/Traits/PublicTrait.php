@@ -4,6 +4,7 @@ namespace App\Livewire\Traits;
 
 
 use App\Enums\AccLevel;
+use App\Enums\TarType;
 use App\Models\Rent;
 use App\Models\Renttran;
 use App\Models\Salary;
@@ -35,12 +36,14 @@ trait PublicTrait {
         if ($name === 'kst') $label='القسط';
         if ($name === 'sul_date') $label='تاريخ العقد';
         if ($name === 'tar_date') $label='التاريخ';
+        if ($name === 'tar_type') $label='نوع الترجيع';
 
         return TextColumn::make($name)
                 ->label($label)
                 ->searchable()
                 ->sortable();
     }
+
 
 
     public static function ret_spatie_header(){

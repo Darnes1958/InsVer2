@@ -9,6 +9,7 @@ use App\Livewire\Traits\PublicTrait;
 use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
 use App\Models\OverTar\over_kst;
+use App\Models\OverTar\tar_kst;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -137,6 +138,7 @@ class OverRep extends Page implements HasForms,HasTable
                     })
                     ;
             })
+            ->defaultSort('tar_date','desc')
             ->striped()
             ->pluralModelLabel('الفائض')
             ->columns([
@@ -158,6 +160,19 @@ class OverRep extends Page implements HasForms,HasTable
                         ),
             ]
 
-            );
+            )
+            ->actions([
+                \Filament\Tables\Actions\Action::make('tar')
+                    ->label('ترجيع')
+                    ->visible(function ($record){return $record->letters==0;})
+                    ->requiresConfirmation()
+                    ->action(function ($record){
+                        tar_kst::create(['no'=>$record->no,'name'=>$record->name,'bank'=>$record->bank,
+                            'acc'=>$record->acc,'tar_date'=>now(),'kst'=>$record->kst,'tar_type'=>2,'inp_date'=>now()]);
+                        $record->letters=1;
+                        $record->save();
+                    })
+
+            ]);
     }
 }
