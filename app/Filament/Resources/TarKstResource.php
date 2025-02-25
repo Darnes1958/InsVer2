@@ -44,40 +44,19 @@ class TarKstResource extends Resource
     {
         return $form
             ->schema([
-               Radio::make('fromWho')
-                ->hiddenLabel()
-                ->live()
-                ->visible(function ($operation){
-                    return $operation=='create';
-                })
-                ->dehydrated(false)
-                ->options([
-                   'main'=>'من القائم',
-                    'MainArc'=>'من الأرشيف',
-                ])
-                   ->default('main')
-                ->afterStateUpdated(function (Forms\Set $set){
-                    $set('kst',null);
-                    $set('no',null);
-                }),
+
                DatePicker::make('tar_date')
+                   ->default(now())
                 ->label('التاريخ'),
                Select::make('no')
                    ->visible(function ($operation){
                        return $operation=='create';
                    })
-                ->options(function (Forms\Get $get){
-                    if ($get('fromWho')=='main')
-                     return   main::all()->pluck('name', 'no');
-                    else
-                     return   MainArc::all()->pluck('name', 'no');
-                })
+                ->options(main::all()->pluck('name', 'no'))
+
                    ->live()
                    ->afterStateUpdated(function ($state,Forms\Set $set,Forms\Get $get){
-                       if ($get('fromWho')=='main')
                            $main=main::where('no',$get('no'))->first();
-                       if ($get('fromWho')=='MainArc')
-                           $main=MainArc::where('no',$get('no'))->first();
                        $set('bank',$main->bank);
                        $set('acc',$main->acc);
                        $set('name',$main->name);
@@ -172,7 +151,7 @@ class TarKstResource extends Resource
             'index' => Pages\ListTarKsts::route('/'),
             'create' => Pages\CreateTarKst::route('/create'),
             'edit' => Pages\EditTarKst::route('/{record}/edit'),
-
+            'createarc'=>Pages\CreateTarArc::route('/createarc')
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\TarKstResource\Pages;
 
 use App\Filament\Resources\TarKstResource;
 use Filament\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 
 class ListTarKsts extends ListRecords
@@ -13,7 +14,10 @@ protected ?string $heading='استفسار وبحث وادخال ترجيعات'
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('ادخال (ترجيع مبالغ) لعقد'),
+            Actions\CreateAction::make()->label('ترجيع مبالغ لعقد'),
+            Actions\Action::make('inpArc')
+             ->url(CreateTarArc::getUrl())
+             ->label('ترجيع مبالغ لعقد من الارشيف'),
 
         ];
     }
