@@ -46,7 +46,7 @@ class OverArcRep extends Page implements HasForms,HasTable
     protected static ?string $navigationLabel='الفائض من الأرشيف';
     protected static ?int $navigationSort=6;
     protected ?string $heading='الخصم بالفائض من الأرشيف';
-
+    protected static ?string $navigationGroup='فائض وترجيع';
     public static function shouldRegisterNavigation(): bool
     {
         return Auth::user()->can('فائض وترجيع');

@@ -23,16 +23,22 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 use SebastianBergmann\CodeCoverage\Filter;
 
 class TarKstResource extends Resource
 {
     use PublicTrait;
     protected static ?string $model = tar_kst::class;
+    protected static ?string $navigationGroup='فائض وترجيع';
     protected static ?string $pluralLabel='ترجيع اقساط ومبالغ';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $label='ترجيع اقساط ومبالغ';
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('فائض وترجيع');
+    }
 
     public static function form(Form $form): Form
     {

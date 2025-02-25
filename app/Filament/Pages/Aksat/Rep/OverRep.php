@@ -38,6 +38,7 @@ class OverRep extends Page implements HasForms,HasTable
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.aksat.rep.over-rep';
+    protected static ?string $navigationGroup='فائض وترجيع';
     protected static ?string $navigationLabel='الفائض';
     protected static ?int $navigationSort=5;
     protected ?string $heading='الخصم بالفائض';
