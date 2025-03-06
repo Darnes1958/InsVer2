@@ -6,12 +6,21 @@ use App\Models\aksat\main;
 use App\Models\aksat\main_trans_view2;
 use App\Models\aksat\main_view;
 use App\Models\aksat\MainArc;
+use App\Models\bank\bank;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 trait reportTrait
 {
+    public function retBankAll($from)
+    {
+     if ($from=='bank')   $main = bank::query()
+            ;
+
+        return $main;
+    }
+
     public function retMotakra($bank_no,$TajNo,$By,$khamlaType) {
         $res=DB::connection(Auth()->user()->company)->table('settings')
             ->where('no',3)->first();

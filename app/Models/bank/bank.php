@@ -3,6 +3,7 @@
 namespace App\Models\bank;
 
 use App\Models\aksat\main;
+use App\Models\aksat\MainArc;
 use App\Models\NewModel\Nmain;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,11 @@ class bank extends Model
     {
         return $this->hasMany(main::class, 'bank', 'bank_no');
     }
+    public function mainarc()
+    {
+        return $this->hasMany(MainArc::class, 'bank', 'bank_no');
+    }
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
