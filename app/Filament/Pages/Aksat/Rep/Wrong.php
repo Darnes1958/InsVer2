@@ -4,12 +4,17 @@ namespace App\Filament\Pages\Aksat\Rep;
 
 use App\Enums\BankTaj;
 use App\Enums\Morahel;
-use App\Livewire\AKsat\Rep\OverKst;
+use App\Enums\Mosahah;
 use App\Livewire\Traits\PublicTrait;
+use App\Models\aksat\kst_trans;
+use App\Models\aksat\main;
 use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
+
 use App\Models\OverTar\over_kst;
 use App\Models\OverTar\tar_kst;
+use App\Models\OverTar\wrong_Kst;
+use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -19,36 +24,36 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
-use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
-use NunoMaduro\Collision\Adapters\Phpunit\State;
 
-class OverRep extends Page implements HasForms,HasTable
+class Wrong extends Page implements HasForms,HasTable
 {
     use InteractsWithForms,InteractsWithTable;
     use PublicTrait;
 
-    protected static ?string $model =over_kst::class;
+    protected static ?string $model =wrong_Kst::class;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.aksat.rep.over-rep';
+    protected static string $view = 'filament.pages.aksat.rep.wrong';
     protected static ?string $navigationGroup='فائض وترجيع';
-    protected static ?string $navigationLabel='الفائض';
-    protected static ?int $navigationSort=5;
-    protected ?string $heading='الخصم بالفائض';
+    protected static ?string $navigationLabel='بالخطأ';
+    protected static ?int $navigationSort=7;
+    protected ?string $heading='أقساط واردة بالخطأ';
+
 
     public static function shouldRegisterNavigation(): bool
-{
-    return Auth::user()->can('فائض وترجيع');
-}
+    {
+        return Auth::user()->can('فائض وترجيع');
+    }
     public $By='taj';
-    public $letters=0;
+    public $morahel=0;
     public $bank_id;
     public $taj_id;
     public $bank_name;
@@ -59,16 +64,16 @@ class OverRep extends Page implements HasForms,HasTable
     {
         return $form
             ->schema([
-               Radio::make('By')
-                ->hiddenLabel()
-                ->afterStateUpdated(function ($state) {$this->By=$state;})
-                ->live()
-                ->options(BankTaj::class),
-               Radio::make('letters')
-               ->hiddenLabel()
-               ->afterStateUpdated(function ($state) {$this->letters=$state;})
-               ->live()
-               ->options(Morahel::class),
+                Radio::make('By')
+                    ->hiddenLabel()
+                    ->afterStateUpdated(function ($state) {$this->By=$state;})
+                    ->live()
+                    ->options(BankTaj::class),
+                Radio::make('morahel')
+                    ->hiddenLabel()
+                    ->afterStateUpdated(function ($state) {$this->morahel=$state;})
+                    ->live()
+                    ->options(Mosahah::class),
                 Select::make('taj_id')
                     ->options(BankTajmeehy::all()->pluck('TajName', 'TajNo'))
                     ->searchable()
@@ -81,7 +86,7 @@ class OverRep extends Page implements HasForms,HasTable
                 Select::make('bank_id')
                     ->options(bank::all()->pluck('bank_name', 'bank_no'))
                     ->afterStateUpdated(function ($state) {$this->bank_id=$state;
-                    $this->bank_name=bank::find($state)->bank_name;})
+                        $this->bank_name=bank::find($state)->bank_name;})
                     ->searchable()
                     ->columnSpan(2)
                     ->live()
@@ -95,26 +100,7 @@ class OverRep extends Page implements HasForms,HasTable
                     ->afterStateUpdated(function ($state) {$this->Date2=$state;})
                     ->live()
                     ->label('إلي تاريخ'),
-                Actions::make([
-                    Action::make('print')
-                     ->label('طباعة')
-                        ->icon('heroicon-o-printer')
-                        ->color('blue')
 
-                        ->action(function (){
-                                   $arr=[];
-                                   $arr['bank_name']=$this->bank_name;
-                                   $date='';
-                                   if ($this->Date1) $date='من تاريخ '.$this->Date1;
-                                   if ($this->Date2) $date=$date.' إلي تاريخ '.$this->Date2;
-                                   $arr['date']=$date;
-                                   $arr['Table']='over_kst';
-                                   $arr['letters']=$this->letters;
-                                   return Response::download(self::ret_spatie($this->getTableQueryForExport()->get(),
-                                     'PrnView.aksat.pdf-over',$arr), 'filename.pdf', self::ret_spatie_header());
-                        })
-                    ,
-                ])->verticalAlignment(VerticalAlignment::End)
 
             ])->columns(10);
     }
@@ -123,8 +109,8 @@ class OverRep extends Page implements HasForms,HasTable
     {
         return $table
             ->query(function (){
-                return over_kst::query()
-                    ->where('letters',$this->letters)
+                return wrong_Kst::query()
+                    ->where('morahel',$this->morahel)
                     ->when($this->By=='bank',function($query){
                         $query->where('bank',$this->bank_id);
                     })
@@ -141,14 +127,14 @@ class OverRep extends Page implements HasForms,HasTable
             })
             ->defaultSort('tar_date','desc')
             ->striped()
-            ->pluralModelLabel('الفائض')
+            ->pluralModelLabel('بالخطأ')
             ->columns([
-                    self::getMy('no'),
+                    self::getMy('no')->visible(function (){return $this->morahel==2;}),
                     self::getMy('name'),
                     self::getMy('acc'),
                     self::getMy('tar_date'),
                     self::getMy('kst')
-                    ->label('المبلغ')
+                        ->label('المبلغ')
                         ->summarize(Sum::make()->numeric(
                             decimalPlaces: 2,
                             decimalSeparator: '.',
@@ -159,21 +145,47 @@ class OverRep extends Page implements HasForms,HasTable
                             decimalSeparator: '.',
                             thousandsSeparator: ',',
                         ),
-            ]
+
+
+                ]
 
             )
             ->actions([
-                \Filament\Tables\Actions\Action::make('tar')
-                    ->label('ترجيع')
-                    ->visible(function ($record){return $record->letters==0;})
-                    ->requiresConfirmation()
-                    ->action(function ($record){
-                        tar_kst::create(['no'=>$record->no,'name'=>$record->name,'bank'=>$record->bank,
-                            'acc'=>$record->acc,'tar_date'=>now(),'kst'=>$record->kst,'tar_type'=>2,'inp_date'=>now()]);
-                        $record->letters=1;
-                        $record->save();
+                \Filament\Tables\Actions\Action::make('تصحيح')
+                    ->label('')
+                    ->icon('heroicon-o-check')
+                    ->iconButton()
+                    ->visible(function ($record){return $record->morahel->value==0;})
+                    ->color('success')
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->label('تصحيح'))
+                    ->form([
+                        Select::make('main_id')
+                            ->label('العقد')
+                            ->options(function ($record) {
+                                return main::all()
+                                    ->pluck('name', 'no');
+                            })
+
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                    ])
+
+                    ->action(function ($record,array $data) {
+                        $wrong=wrong_Kst::where('acc',$record->acc)->get();
+                        foreach ($wrong as $wr) {
+                            self::ksm_kst($data['main_id'],$wr->kst,$wr->tar_date,$wr->h_no);
+                            $wr->morahel=2;
+                            $wr->no=$data['main_id'];
+                            $wr->save();
+                        }
+                        $taj=bank::find($record->bank)->bank_tajmeeh;
+                        main::find($data['main_id'])
+                            ->update(['acc'=>$record->acc,'bank'=>$record->bank,'taj_id'=>$taj]);
+
                     })
 
             ]);
     }
+
 }
