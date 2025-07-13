@@ -6,7 +6,7 @@ use App\Models\aksat\kst_trans;
 use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
 use App\Models\bank\Companies;
-use App\Models\Customers;
+use App\Models\Customer;
 use App\Models\excel\MahjozaModel;
 use App\Models\jeha\jeha;
 use App\Models\sell\rep_sell_tran;
@@ -34,7 +34,7 @@ class RepAksatController extends Controller
     function PdfMain($no){
 
     $RepDate=date('Y-m-d');
-    $cus=Customers::where('Company',Auth::user()->company)->first();
+    $cus=Customer::where('Company',Auth::user()->company)->first();
     $res=DB::connection(Auth()->user()->company)->table('main_view')
         ->where('no',  $no)
         ->first();
@@ -62,7 +62,7 @@ class RepAksatController extends Controller
     function PdfMainCont($no){
 
         $RepDate=date('Y-m-d');
-        $cus=Customers::where('Company',Auth::user()->company)->first();
+        $cus=Customer::where('Company',Auth::user()->company)->first();
         $res=DB::connection(Auth()->user()->company)->table('main_view')
             ->where('no',  $no)
             ->first();
@@ -99,7 +99,7 @@ class RepAksatController extends Controller
     }
     public function PdfMosdada(Request $request){
         $RepDate=date('Y-m-d');
-        $cus=Customers::where('Company',Auth::user()->company)->first();
+        $cus=Customer::where('Company',Auth::user()->company)->first();
         $res=DB::connection(Auth()->user()->company)->table('main_view')
             ->when($request->ByTajmeehy=='Bank',function($q) use($request){
                 $q->where('bank', '=', $request->bank_no);
@@ -132,7 +132,7 @@ class RepAksatController extends Controller
     public function PdfKhasf(Request $request){
 
         $RepDate=date('Y-m-d');
-        $cus=Customers::where('Company',Auth::user()->company)->first();
+        $cus=Customer::where('Company',Auth::user()->company)->first();
 
         $res=DB::connection(Auth()->user()->company)->table($request->from)
             ->when($request->ByTajmeehy=='Bank',function($q) use($request){
@@ -157,7 +157,7 @@ class RepAksatController extends Controller
     function PdfKamla(Request $request){
 
         $RepDate=date('Y-m-d');
-        $cus=Customers::where('Company',Auth::user()->company)->first();
+        $cus=Customer::where('Company',Auth::user()->company)->first();
         if ($request->RepRadio=='all') {
             $first = DB::connection(Auth()->user()->company)->table('main_trans_view2')
                 ->selectRaw('no,name,sul_date,sul,sul_pay,raseed,kst,bank_name,acc,order_no,max(ksm_date) as ksm_date')
@@ -232,7 +232,7 @@ class RepAksatController extends Controller
         $Month=$month.'\\'.$year;
 
         $RepDate=date('Y-m-d');
-        $cus=Customers::where('Company',Auth::user()->company)->first();
+        $cus=Customer::where('Company',Auth::user()->company)->first();
         $RepTable= DB::connection(Auth()->user()->company)->table('main')
             ->join('late','main.no','=','late.no')
             ->selectRaw('acc,name,sul_date,sul,kst_count,sul_pay,raseed,main.kst,main.no,round((sul_pay/kst),0) pay_count,late,

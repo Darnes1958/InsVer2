@@ -9,7 +9,7 @@ use App\Models\aksat\main;
 use App\Models\aksat\MainArc;
 use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
-use App\Models\Customers;
+use App\Models\Customer;
 use App\Models\NewModel\Nmain;
 use App\Models\OverTar\over_kst;
 use App\Models\OverTar\stop_kst;

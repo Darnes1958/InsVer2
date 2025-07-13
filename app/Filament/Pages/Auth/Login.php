@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages\Auth;
 
-use App\Models\Customers;
+use App\Models\Customer;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
@@ -93,7 +93,7 @@ class Login extends \Filament\Pages\Auth\Login
         $user = Filament::auth()->user();
 
         if ($user->id!=1)
-        if (! Customers::where('Company',Auth::user()->company)->where('CompCode',$code)->exists()) {
+        if (! Customer::where('Company',Auth::user()->company)->where('CompCode',$code)->exists()) {
             $this->throwFailureValidationException();
         }
 

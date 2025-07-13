@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Customers;
+use App\Models\Customer;
 use App\Models\Victim;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -13,7 +13,7 @@ class MainPage extends BaseWidget
 {
     protected function getStats(): array
     {
-        $comp=Customers::where('Company',Auth::user()->company)->first();
+        $comp=Customer::where('Company',Auth::user()->company)->first();
         return [
             Stat::make('نظام البيع بالتقسيط',$comp->CompanyName)
                 ->color('primary')

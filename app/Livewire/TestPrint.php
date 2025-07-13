@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Customers;
+use App\Models\Customer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +29,7 @@ class TestPrint extends Component
     }
     public function PdfM($ByTajmeehy,$bank_no,$TajNo,$baky,$bank_name){
         $RepDate=date('Y-m-d');
-        $cus=Customers::where('Company',Auth::user()->company)->first();
+        $cus=Customer::where('Company',Auth::user()->company)->first();
         $res=DB::connection(Auth()->user()->company)->table('main_view')
             ->when($ByTajmeehy=='Bank',function($q) use($ByTajmeehy,$bank_no){
                 $q->where('bank', '=', $bank_no);

@@ -3,7 +3,7 @@
 namespace App\Exports;
 
 use App\Models\aksat\main_view;
-use App\Models\Customers;
+use App\Models\Customer;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -176,7 +176,7 @@ class Motakra extends DefaultValueBinder implements FromCollection,WithMapping, 
     }
     public function headings(): array
     {
-        $cus=Customers::where('Company',Auth::user()->company)->first();
+        $cus=Customer::where('Company',Auth::user()->company)->first();
         return [
             [$cus->CompanyName],
             [$cus->CompanyNameSuffix],
@@ -202,7 +202,7 @@ class Motakra extends DefaultValueBinder implements FromCollection,WithMapping, 
         $this->months=$month.'\\'.$year;
 
         $RepDate=date('Y-m-d');
-        $cus=Customers::where('Company',Auth::user()->company)->first();
+        $cus=Customer::where('Company',Auth::user()->company)->first();
         $RepTable= DB::connection(Auth()->user()->company)->table('main')
             ->join('late','main.no','=','late.no')
             ->selectRaw('acc,name,sul_date,sul,kst_count,sul_pay,raseed,main.kst,main.no,round((sul_pay/kst),0) pay_count,late,

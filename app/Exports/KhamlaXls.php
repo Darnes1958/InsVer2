@@ -5,7 +5,7 @@ namespace App\Exports;
 use App\Models\aksat\main_view;
 use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
-use App\Models\Customers;
+use App\Models\Customer;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -180,7 +180,7 @@ class KhamlaXls extends DefaultValueBinder implements FromCollection,WithMapping
     }
     public function headings(): array
     {
-        $cus=Customers::where('Company',Auth::user()->company)->first();
+        $cus=Customer::where('Company',Auth::user()->company)->first();
         return [
             [$cus->CompanyName],
             [$cus->CompanyNameSuffix],

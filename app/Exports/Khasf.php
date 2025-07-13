@@ -7,7 +7,7 @@ use App\Models\aksat\MainArc;
 use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
 use App\Models\bank\rep_bank;
-use App\Models\Customers;
+use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
@@ -166,7 +166,7 @@ class Khasf  implements FromCollection,WithMapping, WithHeadings,
 }
     public function headings(): array
     {
-        $cus=Customers::where('Company',Auth::user()->company)->first();
+        $cus=Customer::where('Company',Auth::user()->company)->first();
         return [
             [$cus->CompanyName],
             [$cus->CompanyNameSuffix],

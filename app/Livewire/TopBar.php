@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Customers;
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -25,7 +25,7 @@ class TopBar extends Component
 
     public function render()
     {
-        $company=Customers::query()->get();
+        $company=Customer::query()->get();
 
         return view('livewire.top-bar',['company'=>$company,'name'=>$this->name]);
     }

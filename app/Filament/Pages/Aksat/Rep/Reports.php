@@ -19,7 +19,7 @@ use App\Models\aksat\main;
 use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
 
-use App\Models\Customers;
+use App\Models\Customer;
 use ArPHP\I18N\Arabic;
 
 use Filament\Forms\Components\Checkbox;
