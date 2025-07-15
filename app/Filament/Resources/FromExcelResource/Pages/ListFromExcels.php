@@ -6,6 +6,7 @@ use App\Filament\Resources\FromExcelResource;
 use App\Filament\Resources\FromExcelResource\Widgets\FromExcelWidget;
 use App\Imports\FromExcelImport;
 use App\Models\bank\BankTajmeehy;
+use App\Models\CompanyTajmeehy;
 use App\Models\Dateofexcel;
 use App\Models\ExcelSeting;
 use App\Models\FromExcel;
@@ -13,8 +14,12 @@ use App\Models\User;
 use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class ListFromExcels extends ListRecords
@@ -27,20 +32,48 @@ class ListFromExcels extends ListRecords
 
             Actions\Action::make('Do')
                 ->color('success')
-                ->fillForm(fn (): array => [
-                    'taj' => Auth::user()->IsAdmin,'bank'=>Auth::user()->empno,
-                ])
+                ->fillForm(function (){
+                    $bank=Auth::user()->empno;
+                    if (CompanyTajmeehy::query()
+                         ->where('bank_id',$bank)
+                         ->where('company',Auth::user()->company)
+                         ->count() ==1) {
+                        $taj=CompanyTajmeehy::query()
+                            ->where('bank_id',$bank)
+                            ->where('company',Auth::user()->company)->first()->taj_id;
+                    } else $taj=null;
+                    return ['taj' => $taj,'bank'=>Auth::user()->empno,];
+                })
+
                 ->form([
+                    Select::make('bank')
+                        ->options(ExcelSeting::all()->pluck('bank','id'))
+                        ->label('المصرف')
+                        ->afterStateUpdated(function (Set $set,$state){
+                            if (CompanyTajmeehy::query()
+                                    ->where('bank_id',$state)
+                                    ->where('company',Auth::user()->company)
+                                    ->count() ==1) {
+                                $set('taj', CompanyTajmeehy::query()
+                                    ->where('bank_id', $state)
+                                    ->where('company', Auth::user()->company)->first()->taj_id);
+                            } else $set('taj', null);
+                        })
+                        ->live()
+                        ->required(),
                     Select::make('taj')
                         ->label('المصرف التجميعي')
-                        ->options(BankTajmeehy::all()->pluck('TajName','TajNo'))
+                        ->live()
+                        ->options(fn (Get $get): Collection => BankTajmeehy::query()
+                            ->whereIn('TajNo',CompanyTajmeehy::where('bank_id', $get('bank'))
+                                ->where('company',Auth::user()->company)->pluck('taj_id'))
+
+                            ->pluck('TajName', 'TajNo'))
+
                         ->searchable()
                         ->preload()
                         ->required(),
-                    Select::make('bank')
-                        ->options(ExcelSeting::all()->pluck('bank','id'))
-                        ->label('نموذج المصرف')
-                        ->required(),
+
                 ])
                 ->action(function (array $data){
                     FromExcel::truncate();

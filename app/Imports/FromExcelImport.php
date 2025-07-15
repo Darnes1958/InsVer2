@@ -25,8 +25,6 @@ class FromExcelImport implements ToModel, WithHeadingRow
         return null;
       }
 
-
-
       $rec= FromExcel::on(auth()->user()->company)->create(
         [
           'name' => $row[$bank->name],
@@ -36,7 +34,6 @@ class FromExcelImport implements ToModel, WithHeadingRow
           'bank' => 0,
           'hafitha_tajmeehy' => Auth::user()->IsAdmin,
           'h_no' => 1,
-
         ]
       );
 

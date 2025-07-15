@@ -41,7 +41,6 @@ class ExcelSetingResource extends Resource
             ->columns([
                 TextColumn::make('bank'),
                 TextColumn::make('headRowNo'),
-                TextColumn::make('taj'),
                 TextColumn::make('ksm_date'),
                 TextColumn::make('name'),
                 TextColumn::make('acc'),
