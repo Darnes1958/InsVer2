@@ -40,6 +40,8 @@ trait PublicTrait {
         if ($name === 'tar_date') $label='التاريخ';
         if ($name === 'tar_type') $label='نوع الترجيع';
         if ($name === 'morahel') $label='الحالة';
+        if ($name === 'stop_date') $label='تاريخ التوقف';
+        if ($name === 'notes') $label='ملاحظات';
 
         return TextColumn::make($name)
                 ->label($label)

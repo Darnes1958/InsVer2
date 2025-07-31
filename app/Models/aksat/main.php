@@ -3,6 +3,7 @@
 namespace App\Models\aksat;
 
 use App\Models\bank\bank;
+use App\Models\jeha\jeha;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,10 @@ class main extends Model
     {
         return $this->belongsTo(bank::class, 'bank', 'bank_no');
 
+    }
+    public function jeha()
+    {
+        return $this->belongsTo(jeha::class, 'jeha', 'jeha_no');
     }
     public function __construct(array $attributes = [])
     {
