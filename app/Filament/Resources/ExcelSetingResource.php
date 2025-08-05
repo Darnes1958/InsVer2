@@ -27,7 +27,6 @@ class ExcelSetingResource extends Resource
             ->schema([
                 TextInput::make('bank')->required(),
                 TextInput::make('headRowNo')->required(),
-                TextInput::make('taj')->required(),
                 TextInput::make('ksm_date')->required(),
                 TextInput::make('name')->required(),
                 TextInput::make('acc')->required(),
