@@ -120,6 +120,7 @@ class ListFromExcels extends ListRecords
                 ->color('danger')
                 ->use(FromExcelImport::class),
           Actions\Action::make('Tarheel')
+              ->disabled()
             ->action(function () {
                 $res = FromExcel::query()->orderBy('acc')->get();
                 $taj = Auth::user()->isIdmin;

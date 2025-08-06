@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ExcelSetingResource extends Resource
 {
     protected static ?string $model = ExcelSeting::class;
+    protected static ?string $navigationGroup='Setting';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 

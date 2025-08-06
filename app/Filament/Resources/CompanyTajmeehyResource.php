@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Auth;
 class CompanyTajmeehyResource extends Resource
 {
     protected static ?string $model = CompanyTajmeehy::class;
+    protected static ?string $navigationGroup='Setting';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
