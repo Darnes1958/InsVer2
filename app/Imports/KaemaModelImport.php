@@ -2,11 +2,9 @@
 
 namespace App\Imports;
 
-use App\Models\excel\FromExcelModel;
+
 
 use App\Models\excel\Kaema;
-use App\Models\excel\KaemaModel;
-use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use PhpOffice\PhpSpreadsheet\Shared\Date;

@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\KaemaResource\Pages;
-use App\Filament\Resources\KaemaResource\RelationManagers;
-
-use App\Models\excel\Kaema;
+use App\Filament\Resources\MahjozaResource\Pages;
+use App\Filament\Resources\MahjozaResource\RelationManagers;
+use App\Models\excel\Mahjoza;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,16 +15,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class KaemaResource extends Resource
+class MahjozaResource extends Resource
 {
-    protected static ?string $model = Kaema::class;
+    protected static ?string $model = Mahjoza::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function shouldRegisterNavigation(): bool
-    {
-        return  auth()->user()->id==1;
-    }
     public static function form(Form $form): Form
     {
         return $form
@@ -39,30 +34,30 @@ class KaemaResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('MainOrArc')
-                  ->state(function (Model $record){
-                      if ($record->MainOrArc==1) return 'قائم';
-                      if ($record->MainOrArc==2) return 'أرشيف';
-                  })
+                    ->state(function (Model $record){
+                        if ($record->MainOrArc==1) return 'قائم';
+                        if ($record->MainOrArc==2) return 'أرشيف';
+                    })
                     ->color(function (Model $record){
                         if ($record->MainOrArc==1) return 'success';
                         if ($record->MainOrArc==2) return 'info';
                     }),
                 TextColumn::make('no'),
+
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('acc')->searchable()->sortable(),
-                TextColumn::make('kst'),
-                TextColumn::make('sul_date'),
-                TextColumn::make('bankcode'),
-                TextColumn::make('no_bank'),
+                TextColumn::make('aksat_tot'),
+                TextColumn::make('aksat_count'),
+                TextColumn::make('sal_date'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                //
+               //
             ])
             ->bulkActions([
-              //
+                //
             ]);
     }
 
@@ -76,9 +71,9 @@ class KaemaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListKaemas::route('/'),
-            'create' => Pages\CreateKaema::route('/create'),
-            'edit' => Pages\EditKaema::route('/{record}/edit'),
+            'index' => Pages\ListMahjozas::route('/'),
+            'create' => Pages\CreateMahjoza::route('/create'),
+            'edit' => Pages\EditMahjoza::route('/{record}/edit'),
         ];
     }
 }

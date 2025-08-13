@@ -5,6 +5,7 @@ namespace App\Filament\Resources\KaemaResource\Pages;
 use App\Filament\Resources\KaemaResource;
 use App\Imports\FromExcelImport;
 use App\Imports\KaemaModelImport;
+use App\Models\aksat\main;
 use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
 use App\Models\Customer;
@@ -18,6 +19,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Termwind\Components\Raw;
 
 class ListKaemas extends ListRecords
 {
@@ -58,20 +60,26 @@ class ListKaemas extends ListRecords
 
              ->action(function (){
                  Kaema::where('Taj',null)->update(['Taj' => $this->taj_id]);
-                 $TajNo=$this->taj_id;
+
                  if (Customer::where('Company',Auth::user()->company)->first()->oneBanke==1)
                  {
                      $bank=bank::where('bank_tajmeehy',$this->taj_id)->first();
-                     Kaema::where('Taj',$this->taj_id)->update(['bank'=>$bank->bank_no,'bankcode'=>'bank_code']);
+                     Kaema::where('Taj',$this->taj_id)->update(['bank'=>$bank->bank_no,'bankcode'=>$bank->bank_code]);
                  } else
-                     Kaema::where('Taj',$this->taj_id)->update(['bank'=>$bank->bank_no,'bankcode'=>'bank_code']);
-                     DB::connection(Auth()->user()->company)
-                         ->statement( DB::raw("update Kaema set bank=bank_no from bank where Taj='$TajNo' and bank_tajmeeh='$TajNo' and bankcode=bank_code") );
+                     Kaema::join('bank','kaema.Taj','bank.bank_tajmeeh')
+                         ->where('kaema.Taj',$this->taj_id)
+                         ->where('kaema.bankcode',DB::raw('bank.bank_code'))
+                         ->update(['bank'=>DB::raw('bank.bank_no')]);
 
-                 DB::connection(Auth()->user()->company)->statement( DB::raw("update Kaema set Kaema.no=main.no,MainOrArc=1
-            from main where main.bank=Kaema.bank and main.acc=kaema.acc") );
-                 DB::connection(Auth()->user()->company)->statement( DB::raw("update Kaema set Kaema.no=mainarc.no,MainOrArc=2
-             from mainarc where  mainarc.bank=Kaema.bank and mainarc.acc=kaema.acc and Kaema.no is null") );
+                 Kaema::join('main','kaema.Taj','main.taj_id')
+                         ->where('kaema.Taj',$this->taj_id)
+                         ->where('kaema.acc',DB::raw("main.acc"))
+                         ->update(['kaema.no'=>DB::raw("main.no"),'MainOrArc'=>1]);
+                 Kaema::join('MainArc','kaema.Taj','MainArc.taj_id')
+                     ->where('kaema.Taj',$this->taj_id)
+                     ->where('kaema.acc',DB::raw("MainArc.acc"))
+                     ->update(['kaema.no'=>DB::raw("MainArc.no"),'MainOrArc'=>2]);
+
              })
              ->color('success'),
         ];
