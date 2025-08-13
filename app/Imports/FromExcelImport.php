@@ -20,7 +20,7 @@ class FromExcelImport implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
-        info($row);
+
         $bank=ExcelSeting::find(Auth::user()->empno);
       if ($row[$bank->name]==null  || $row[$bank->acc]==null
         || $row[$bank->ksm_date]==null || $row[$bank->ksm]==null
