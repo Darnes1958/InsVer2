@@ -6,6 +6,7 @@ use App\Models\ExcelSeting;
 use App\Models\FromExcel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -22,21 +23,35 @@ class FromExcelImport implements ToModel, WithHeadingRow
     {
 
         $bank=ExcelSeting::find(Auth::user()->empno);
-      if ($row[$bank->name]==null  || $row[$bank->acc]==null
+      if (
+          $row[$bank->name]==null  || $row[$bank->acc]==null
         || $row[$bank->ksm_date]==null || $row[$bank->ksm]==null
-      ) {
+      )
+      {
         return null;
       }
+        if (
+            !is_numeric($row[$bank->ksm])  || !is_numeric($row[$bank->acc])
+
+        )
+        {
+            return null;
+        }
         try {
             $date = Carbon::createFromFormat('d/m/Y', $row[$bank->ksm_date]);
             } catch(InvalidArgumentException $x) {
           $date=  Date::excelToDateTimeObject($row[$bank->ksm_date]);
         }
+
+      $ksm=$row[$bank->ksm];
+      if (Auth::user()->company=='Boshlak')  $ksm -=(.05*$ksm);
+
+
       $rec= FromExcel::on(auth()->user()->company)->create(
         [
           'name' => $row[$bank->name],
           'acc' => $row[$bank->acc],
-          'ksm' => $row[$bank->ksm],
+          'ksm' => $ksm,
           'ksm_date' =>$date,
           'bank' => 0,
           'hafitha_tajmeehy' => Auth::user()->IsAdmin,

@@ -107,7 +107,6 @@ class ListFromExcels extends ListRecords
                             ->title('يوجد تداخل في تاريخ الحافظة مع حافظة سابقة لنفس المصرف ')
                             ->send();
                         return false;
-
                     }
 
                     Dateofexcel::create([
@@ -116,6 +115,9 @@ class ListFromExcels extends ListRecords
                             'date_end'=>FromExcel::max('ksm_date'),
                         ]
                     );
+
+
+
                 })
                 ->color('danger')
                 ->use(FromExcelImport::class),

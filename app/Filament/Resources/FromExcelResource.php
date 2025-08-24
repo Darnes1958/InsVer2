@@ -41,7 +41,7 @@ class FromExcelResource extends Resource
               Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
               Tables\Columns\TextColumn::make('acc')->searchable()->sortable(),
               Tables\Columns\TextColumn::make('ksm_date'),
-              Tables\Columns\TextColumn::make('ksm'),
+              Tables\Columns\TextColumn::make('ksm')->numeric('3','.',','),
               Tables\Columns\TextColumn::make('hafitha_tajmeehy'),
             ])
             ->filters([
