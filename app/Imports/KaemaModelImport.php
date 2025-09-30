@@ -40,6 +40,6 @@ class KaemaModelImport implements ToModel, WithHeadingRow
   }//
   public function headingRow(): int
   {
-    return 5;
+    return 10;
   }
 }
