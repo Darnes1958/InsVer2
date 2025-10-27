@@ -44,7 +44,7 @@ class FromExcelImport implements ToModel, WithHeadingRow
         }
 
       $ksm=$row[$bank->ksm];
-      if (Auth::user()->company=='Boshlak')  $ksm -=(.05*$ksm);
+      if (Auth::user()->company=='Boshlak' || Auth::user()->company=='Boshlak5')  $ksm -=(.05*$ksm);
 
 
       $rec= FromExcel::on(auth()->user()->company)->create(
