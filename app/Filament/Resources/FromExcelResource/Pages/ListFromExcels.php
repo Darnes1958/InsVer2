@@ -121,7 +121,7 @@ class ListFromExcels extends ListRecords
                 })
                 ->color('danger')
                 ->use(FromExcelImport::class),
-          Actions\Action::make('Tarheel')
+          Actions\Action::make('Tarheel aksat')
               ->disabled()
             ->action(function () {
                 $res = FromExcel::query()->orderBy('acc')->get();
