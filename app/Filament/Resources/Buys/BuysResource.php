@@ -13,12 +13,18 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class BuysResource extends Resource
 {
     protected static ?string $model = \App\Models\buy\buys::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static ?string $navigationLabel='مشتريات';
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('ادخال مشتريات');
+    }
 
     public static function form(Schema $schema): Schema
     {

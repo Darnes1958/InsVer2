@@ -42,7 +42,10 @@ class CompanyTajmeehyResource extends Resource
                     ->options(BankTajmeehy::all()->pluck('TajName','TajNo'))->required(),
             ]);
     }
-
+    public static function shouldRegisterNavigation(): bool
+    {
+        return  auth()->user()->id==1;
+    }
     public static function table(Table $table): Table
     {
         return $table

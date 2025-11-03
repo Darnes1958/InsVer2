@@ -9,11 +9,11 @@ use Filament\Resources\Pages\ListRecords;
 class ListBuys extends ListRecords
 {
     protected static string $resource = BuysResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
+protected ?string $heading='';
+ //   protected function getHeaderActions(): array
+ //   {
+ //        return [
+ //           CreateAction::make(),
+ //       ];
+ //   }
 }
