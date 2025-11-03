@@ -2,6 +2,17 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\TarKstResource\Pages\ListTarKsts;
+use App\Filament\Resources\TarKstResource\Pages\CreateTarKst;
+use App\Filament\Resources\TarKstResource\Pages\EditTarKst;
+use App\Filament\Resources\TarKstResource\Pages\CreateTarArc;
 use App\Enums\TarType;
 use App\Filament\Resources\TarKstResource\Pages;
 use App\Filament\Resources\TarKstResource\RelationManagers;
@@ -17,7 +28,6 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -30,20 +40,20 @@ class TarKstResource extends Resource
 {
     use PublicTrait;
     protected static ?string $model = tar_kst::class;
-    protected static ?string $navigationGroup='فائض وترجيع';
+    protected static string | \UnitEnum | null $navigationGroup='فائض وترجيع';
     protected static ?string $pluralLabel='ترجيع اقساط ومبالغ';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $label='ترجيع اقساط ومبالغ';
     public static function shouldRegisterNavigation(): bool
     {
         return Auth::user()->can('فائض وترجيع');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
                DatePicker::make('tar_date')
                    ->default(now())
@@ -55,7 +65,7 @@ class TarKstResource extends Resource
                 ->options(main::all()->pluck('name', 'no'))
 
                    ->live()
-                   ->afterStateUpdated(function ($state,Forms\Set $set,Forms\Get $get){
+                   ->afterStateUpdated(function ($state,Set $set,Get $get){
                            $main=main::where('no',$get('no'))->first();
                        $set('bank',$main->bank);
                        $set('acc',$main->acc);
@@ -93,11 +103,11 @@ class TarKstResource extends Resource
             ])
             ->defaultSort('tar_date','desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('tar_type')
+                SelectFilter::make('tar_type')
                  ->label('نوع الترجيع')
                  ->options(TarType::class),
                 Tables\Filters\Filter::make('tar_date')
-                    ->form([
+                    ->schema([
                         DatePicker::make('Date1')
                             ->label('من تاريخ'),
                         DatePicker::make('Date2')
@@ -127,13 +137,13 @@ class TarKstResource extends Resource
                     })
 
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                  ->visible(function ($record) {return $record->tar_type->value==4;}),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -148,10 +158,10 @@ class TarKstResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTarKsts::route('/'),
-            'create' => Pages\CreateTarKst::route('/create'),
-            'edit' => Pages\EditTarKst::route('/{record}/edit'),
-            'createarc'=>Pages\CreateTarArc::route('/createarc')
+            'index' => ListTarKsts::route('/'),
+            'create' => CreateTarKst::route('/create'),
+            'edit' => EditTarKst::route('/{record}/edit'),
+            'createarc'=>CreateTarArc::route('/createarc')
         ];
     }
 }

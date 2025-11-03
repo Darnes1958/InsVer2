@@ -38,13 +38,19 @@ class AppServiceProvider extends ServiceProvider
             fn (): string => Blade::render('@livewire(\'top-bar\')'),
         );
 
-        Table::$defaultNumberLocale = 'nl';
+        Table::configureUsing(fn(Table $table) => $table->defaultNumberLocale('nl'));
         FilamentColor::register([
             'Fuchsia' =>  Color::Fuchsia,
             'green' =>  Color::Green,
             'blue' =>  Color::Blue,
             'gray' =>  Color::Gray,
         ]);
+        Table::configureUsing(fn(Table $table) => $table
+            ->defaultNumberLocale('nl')
+            ->pluralModelLabel('الصفحات')
+            ->emptyStateHeading('لا توجد بيانات')
+            ->defaultKeySort(false)
+        );
 
       Model::unguard();
     }

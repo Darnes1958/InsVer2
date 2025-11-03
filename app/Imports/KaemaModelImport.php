@@ -4,6 +4,7 @@ namespace App\Imports;
 
 
 
+use Illuminate\Database\Eloquent\Model;
 use App\Models\excel\Kaema;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -14,7 +15,7 @@ class KaemaModelImport implements ToModel, WithHeadingRow
   /**
    * @param array $row
    *
-   * @return \Illuminate\Database\Eloquent\Model|null
+   * @return Model|null
    */
   public function model(array $row)
   {

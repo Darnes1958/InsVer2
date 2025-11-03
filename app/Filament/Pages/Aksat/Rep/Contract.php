@@ -2,6 +2,12 @@
 
 namespace App\Filament\Pages\Aksat\Rep;
 
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Actions;
+use Filament\Support\Enums\Width;
+use Exception;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\TextSize;
 use App\Enums\KsmType;
 use App\Livewire\Aksat\Rep\TarKst;
 use App\Models\aksat\kst_trans;
@@ -23,22 +29,18 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
@@ -47,9 +49,9 @@ use Livewire\Attributes\On;
 class Contract extends Page implements HasInfolists
 {
     use InteractsWithInfolists;
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.aksat.rep.contract';
+    protected string $view = 'filament.pages.aksat.rep.contract';
     protected static ?string $navigationLabel='استفسار وتعديل بيانات عقود';
     protected ?string $heading="";
 
@@ -103,11 +105,11 @@ class Contract extends Page implements HasInfolists
     return array_merge(parent::getForms(), [
       "searchForm" => $this->makeForm()
         ->model(Nmain::class)
-        ->schema($this->getsearchFormSchema())
+        ->components($this->getsearchFormSchema())
         ->statePath('searchData'),
         "kstForm" => $this->makeForm()
             ->model(kst_trans::class)
-            ->schema($this->getkstFormSchema())
+            ->components($this->getkstFormSchema())
             ->statePath('kstData'),
 
     ]);
@@ -153,10 +155,10 @@ class Contract extends Page implements HasInfolists
                        $this->dispatch('TakeWithKsm',withksm: $state) ;
                    })->columnSpan(3),
                Actions::make([
-                   Actions\Action::make('ادخال_قسط')
+                   Action::make('ادخال_قسط')
                        ->icon('heroicon-o-plus')
                        ->iconButton()
-                       ->form([
+                       ->schema([
                            Section::make([
                                Radio::make('ksm_type')
                                    ->hiddenLabel()
@@ -325,7 +327,7 @@ class Contract extends Page implements HasInfolists
          })
          ->extraAttributes(['style' => 'margin: 4px;']),
            Actions::make([
-              Actions\Action::make('طباعة')
+              Action::make('طباعة')
                    ->iconButton()
                    ->icon('heroicon-s-printer')
                    ->color('primary')
@@ -333,7 +335,7 @@ class Contract extends Page implements HasInfolists
                    ->url(function (){
                        if ($this->no) return route('pdfmain', $this->no);
                    })->extraAttributes(['style' => 'margin: 2px;']),
-               Actions\Action::make('طباعة_نموذج')
+               Action::make('طباعة_نموذج')
                    ->iconButton()
                    ->icon('heroicon-s-document')
                    ->color('primary')
@@ -346,15 +348,15 @@ class Contract extends Page implements HasInfolists
                ])
                ->columnSpan(2) ,
            Actions::make([
-               Actions\Action::make('ايقاف')
+               Action::make('ايقاف')
                    ->icon('heroicon-o-no-symbol')
-                   ->modalWidth(MaxWidth::Small)
+                   ->modalWidth(Width::Small)
                    ->color('danger')
                    ->visible(function () {return $this->Main->raseed<=0 && $this->showInfo
                    && !stop_kst::where('no',$this->Main->no)->first() &&
                        Auth::user()->can('ادخال فائض وترجيع');})
                    ->iconButton()
-                   ->form([
+                   ->schema([
                        Section::make([
                            DatePicker::make('stop_date')
                                ->required()
@@ -379,7 +381,7 @@ class Contract extends Page implements HasInfolists
 
                        $this->dispatch('showMe',no: $this->no);
                    }),
-               Actions\Action::make('الغاء_الايقاف')
+               Action::make('الغاء_الايقاف')
                    ->link()
                    ->tooltip('الغاء رسالة الايقاف')
                    ->label('هذا العقد موقوف')
@@ -396,7 +398,7 @@ class Contract extends Page implements HasInfolists
                        stop_kst::where('no',$this->Main->no)->delete();
                        $this->dispatch('showMe',no: $this->no);
                    }),
-               Actions\Action::make('نقل_للأرشيف')
+               Action::make('نقل_للأرشيف')
                    ->icon('heroicon-s-archive-box-arrow-down')
                    ->iconButton()
                    ->color('info')
@@ -437,7 +439,7 @@ class Contract extends Page implements HasInfolists
                            $this->showInfo=false;
                            $this->dispatch('resetSearch');
 
-                       } catch (\Exception $e) {
+                       } catch (Exception $e) {
 
                            DB::connection(Auth()->user()->company)->rollback();
                            Notification::make()
@@ -455,17 +457,17 @@ class Contract extends Page implements HasInfolists
 
     ];
   }
-  public function mainInfolist(Infolist $infolist): Infolist
+  public function mainInfolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
 
             ->record($this->Main)
-            ->schema([
+            ->components([
                 TextEntry::make('name')
                  ->color('primary')
                     ->size(function (){
-                        if (strlen($this->Main->name)>50) return TextEntry\TextEntrySize::ExtraSmall;
-                        else return TextEntry\TextEntrySize::Small;
+                        if (strlen($this->Main->name)>50) return TextSize::ExtraSmall;
+                        else return TextSize::Small;
                     })
                  ->extraEntryWrapperAttributes(['style' => 'height: 16px;'])
                  ->hiddenLabel()
@@ -481,13 +483,13 @@ class Contract extends Page implements HasInfolists
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white " > رقم الحساب&nbsp;&nbsp;</span>'))
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->hiddenLabel()
-                    ->size(TextEntry\TextEntrySize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->columnSpan(3),
                 TextEntry::make('bank.bank_name')
                     ->color('primary')
                     ->size(function (){
-                        if (strlen($this->Main->name)>30) return TextEntry\TextEntrySize::ExtraSmall;
-                        else return TextEntry\TextEntrySize::Small;
+                        if (strlen($this->Main->name)>30) return TextSize::ExtraSmall;
+                        else return TextSize::Small;
                     })
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->hiddenLabel()
@@ -497,13 +499,13 @@ class Contract extends Page implements HasInfolists
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> جهة العمل&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
-                    ->size(TextEntry\TextEntrySize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->columnSpan(3),
                 TextEntry::make('sell_point')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> نقطة البيع&nbsp;&nbsp;</span>'))
                     ->extraEntryWrapperAttributes(['style' => 'height:10px;'])
                     ->hiddenLabel()
-                    ->size(TextEntry\TextEntrySize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->color('info')
                     ->state(function (){
                         if ($this->Order_no->sell_type==1) return stores_names::find($this->Order_no->place_no)->st_name;
@@ -516,7 +518,7 @@ class Contract extends Page implements HasInfolists
                     ->color('info')
                     ->prefix(new HtmlString('<span class="text-gray-600 dark:text-white "> ت.العقد&nbsp;&nbsp;</span>'))
                     ->hiddenLabel()
-                    ->size(TextEntry\TextEntrySize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->columnSpan(2),
                 TextEntry::make('sul_tot')
                     ->color('info')

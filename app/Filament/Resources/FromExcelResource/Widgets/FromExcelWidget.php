@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\FromExcelResource\Widgets;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\DeleteAction;
 use App\Models\Dateofexcel;
 
 use Filament\Tables;
@@ -21,12 +23,12 @@ class FromExcelWidget extends BaseWidget
             )
             ->defaultSort('date_begin','desc')
             ->columns([
-                Tables\Columns\TextColumn::make('date_begin'),
-                Tables\Columns\TextColumn::make('date_end'),
-                Tables\Columns\TextColumn::make('taj_id'),
+                TextColumn::make('date_begin'),
+                TextColumn::make('date_end'),
+                TextColumn::make('taj_id'),
             ])
-         ->actions([
-           Tables\Actions\DeleteAction::make(),
+         ->recordActions([
+           DeleteAction::make(),
 
           ]);
     }

@@ -2,12 +2,16 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use App\Filament\Resources\FromExcelResource\Pages\ListFromExcels;
+use App\Filament\Resources\FromExcelResource\Pages\CreateFromExcel;
+use App\Filament\Resources\FromExcelResource\Pages\EditFromExcel;
 use App\Filament\Resources\FromExcelResource\Pages;
 use App\Filament\Resources\FromExcelResource\RelationManagers;
 use App\Filament\Resources\FromExcelResource\Widgets\FromExcelWidget;
 use App\Models\FromExcel;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,17 +22,17 @@ class FromExcelResource extends Resource
 {
     protected static ?string $model = FromExcel::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function shouldRegisterNavigation(): bool
     {
         return  auth()->user()->id==1;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
             ]);
     }
@@ -37,20 +41,20 @@ class FromExcelResource extends Resource
     {
         return $table
             ->columns([
-              Tables\Columns\TextColumn::make('no')->searchable()->sortable(),
-              Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-              Tables\Columns\TextColumn::make('acc')->searchable()->sortable(),
-              Tables\Columns\TextColumn::make('ksm_date'),
-              Tables\Columns\TextColumn::make('ksm')->numeric('3','.',','),
-              Tables\Columns\TextColumn::make('hafitha_tajmeehy'),
+              TextColumn::make('no')->searchable()->sortable(),
+              TextColumn::make('name')->searchable()->sortable(),
+              TextColumn::make('acc')->searchable()->sortable(),
+              TextColumn::make('ksm_date'),
+              TextColumn::make('ksm')->numeric('3','.',','),
+              TextColumn::make('hafitha_tajmeehy'),
             ])
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 //
             ])
-            ->bulkActions([
+            ->toolbarActions([
                //
             ]);
     }
@@ -65,9 +69,9 @@ class FromExcelResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListFromExcels::route('/'),
-            'create' => Pages\CreateFromExcel::route('/create'),
-            'edit' => Pages\EditFromExcel::route('/{record}/edit'),
+            'index' => ListFromExcels::route('/'),
+            'create' => CreateFromExcel::route('/create'),
+            'edit' => EditFromExcel::route('/{record}/edit'),
         ];
     }
     public static function getWidgets(): array

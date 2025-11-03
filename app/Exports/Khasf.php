@@ -2,6 +2,8 @@
 
 namespace App\Exports;
 
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use App\Models\aksat\main;
 use App\Models\aksat\MainArc;
 use App\Models\bank\bank;
@@ -61,22 +63,22 @@ class Khasf  implements FromCollection,WithMapping, WithHeadings,
             $event->sheet
                 ->getStyle('A8:I8')
                 ->getFill()
-                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->setFillType(Fill::FILL_SOLID)
                 ->getStartColor()
                 ->setARGB('E8E1E1');
 
             $event->sheet->getDelegate()->getStyle('B')
                 ->getAlignment()
-                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                ->setHorizontal(Alignment::HORIZONTAL_RIGHT);
             $event->sheet->getDelegate()->getStyle('D')
                 ->getAlignment()
-                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                ->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $event->sheet->getDelegate()->getStyle('G')
                 ->getAlignment()
-                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                ->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $event->sheet->getDelegate()->getStyle('F')
                 ->getAlignment()
-                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
             $event->sheet->setCellValue('D6',$this->title );
             $event->sheet->setCellValue('B'.$this->rowcount+9, 'الإجمالي');
@@ -87,7 +89,7 @@ class Khasf  implements FromCollection,WithMapping, WithHeadings,
             $event->sheet
                 ->getStyle('A'.($this->rowcount+9).':I'.$this->rowcount+9)
                 ->getFill()
-                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->setFillType(Fill::FILL_SOLID)
                 ->getStartColor()
                 ->setARGB('E8E1E1');
             $event->sheet->getDelegate()->setRightToLeft(true);

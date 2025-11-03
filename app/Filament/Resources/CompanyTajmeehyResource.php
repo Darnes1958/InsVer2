@@ -2,6 +2,12 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Hidden;
+use Filament\Actions\EditAction;
+use App\Filament\Resources\CompanyTajmeehyResource\Pages\ListCompanyTajmeehies;
+use App\Filament\Resources\CompanyTajmeehyResource\Pages\CreateCompanyTajmeehy;
+use App\Filament\Resources\CompanyTajmeehyResource\Pages\EditCompanyTajmeehy;
 use App\Filament\Resources\CompanyTajmeehyResource\Pages;
 use App\Filament\Resources\CompanyTajmeehyResource\RelationManagers;
 use App\Models\bank\BankTajmeehy;
@@ -10,7 +16,6 @@ use App\Models\ExcelSeting;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -22,15 +27,15 @@ use Illuminate\Support\Facades\Auth;
 class CompanyTajmeehyResource extends Resource
 {
     protected static ?string $model = CompanyTajmeehy::class;
-    protected static ?string $navigationGroup='Setting';
+    protected static string | \UnitEnum | null $navigationGroup='Setting';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Hidden::make('company')->default(Auth::user()->company),
+        return $schema
+            ->components([
+                Hidden::make('company')->default(Auth::user()->company),
                 Select::make('bank_id')
                     ->options(ExcelSeting::all()->pluck('bank','id'))->required(),
                 Select::make('taj_id')
@@ -52,10 +57,10 @@ class CompanyTajmeehyResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 //
             ]);
     }
@@ -70,9 +75,9 @@ class CompanyTajmeehyResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCompanyTajmeehies::route('/'),
-            'create' => Pages\CreateCompanyTajmeehy::route('/create'),
-            'edit' => Pages\EditCompanyTajmeehy::route('/{record}/edit'),
+            'index' => ListCompanyTajmeehies::route('/'),
+            'create' => CreateCompanyTajmeehy::route('/create'),
+            'edit' => EditCompanyTajmeehy::route('/{record}/edit'),
         ];
     }
 }

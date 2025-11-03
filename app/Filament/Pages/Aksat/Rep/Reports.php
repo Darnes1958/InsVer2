@@ -2,6 +2,9 @@
 
 namespace App\Filament\Pages\Aksat\Rep;
 
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\BulkAction;
 use App\Exports\KhamlaXls;
 use App\Exports\Khasf;
 use App\Exports\MosdadaXls;
@@ -14,7 +17,6 @@ use App\Models\OverTar\over_kst;
 use App\Models\OverTar\stop_kst;
 use App\Traits\reportTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Filament\Forms\Components\Actions;
 use App\Models\aksat\main;
 use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
@@ -26,14 +28,12 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -51,9 +51,9 @@ class Reports extends Page implements HasForms,HasTable
 {
     use InteractsWithForms,InteractsWithTable,reportTrait;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.aksat.rep.reports';
+    protected string $view = 'filament.pages.aksat.rep.reports';
     protected static ?string $navigationLabel='تقارير عقود';
     protected ?string $heading='';
     public static function shouldRegisterNavigation(): bool
@@ -89,7 +89,7 @@ class Reports extends Page implements HasForms,HasTable
         return array_merge(parent::getForms(), [
             "bankForm" => $this->makeForm()
                 ->model(bank::class)
-                ->schema($this->getbankFormSchema())
+                ->components($this->getbankFormSchema())
                 ->statePath('bankData'),
 
         ]);
@@ -189,7 +189,7 @@ class Reports extends Page implements HasForms,HasTable
                         ]),
 
                     Actions::make([
-                        Actions\Action::make('print')
+                        \Filament\Actions\Action::make('print')
                             ->iconButton()
                             ->hidden(function (){return $this->bank==0 && $this->taj==0 ;})
                             ->url(function (){
@@ -213,7 +213,7 @@ class Reports extends Page implements HasForms,HasTable
                             ->color('blue')
                             ->icon('heroicon-o-printer'),
 
-                        Actions\Action::make('اكسل')
+                        \Filament\Actions\Action::make('اكسل')
                             ->hidden(function (){return $this->bank==0 && $this->taj==0 ;})
                             ->action(function (){
                                 $res=$this->retkhasf($this->bank,$this->taj,$this->By,$this->from);
@@ -239,7 +239,7 @@ class Reports extends Page implements HasForms,HasTable
         ];
     }
 
-    public function getTableRecordKey(Model $record): string
+    public function getTableRecordKey(Model|array $record): string
     {
         if ($this->repName=='khamla') return 'no';
 
@@ -249,7 +249,7 @@ class Reports extends Page implements HasForms,HasTable
 
     public  function convertToArabic($html, int $line_length = 100, bool $hindo = false, $forcertl = false): string
     {
-        $Arabic = new \ArPHP\I18N\Arabic();
+        $Arabic = new Arabic();
         $p = $Arabic->arIdentify($html);
 
         for ($i = count($p) - 1; $i >= 0; $i -= 2) {
@@ -278,7 +278,7 @@ class Reports extends Page implements HasForms,HasTable
             ->emptyStateHeading('لا توجد بيانات')
             ->defaultSort('no')
 
-            ->bulkActions([
+            ->toolbarActions([
                 BulkAction::make('excel')
                     ->visible(function (){return $this->repName=='khasf';})
                     ->deselectRecordsAfterCompletion()

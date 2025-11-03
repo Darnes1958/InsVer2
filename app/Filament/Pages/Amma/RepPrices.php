@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages\Amma;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Set;
 use App\Livewire\Traits\PublicTrait;
 use App\Models\aksat\main_sells_bank_view;
 use App\Models\stores\item_price_sell;
@@ -11,8 +13,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -27,7 +27,7 @@ class RepPrices extends Page  implements HasForms
     use InteractsWithForms;
     use PublicTrait;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
 
 
@@ -37,7 +37,7 @@ class RepPrices extends Page  implements HasForms
     {
         return Auth::user()->can('استفسار عن الاسعار');
     }
-    protected static string $view = 'filament.pages.amma.rep-prices';
+    protected string $view = 'filament.pages.amma.rep-prices';
 
     public $item_no;
     public $price_sell;
@@ -46,10 +46,10 @@ class RepPrices extends Page  implements HasForms
         $this->form->fill(['price_sell'=>0]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('item_no')
                  ->label('الصنف')
                  ->searchable()

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use ArPHP\I18N\Arabic;
 use App\Models\Customer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class TestPrint extends Component
 {
     public  function convertToArabic($html, int $line_length = 100, bool $hindo = false, $forcertl = false): string
     {
-        $Arabic = new \ArPHP\I18N\Arabic();
+        $Arabic = new Arabic();
         $p = $Arabic->arIdentify($html);
 
         for ($i = count($p) - 1; $i >= 0; $i -= 2) {

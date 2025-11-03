@@ -1,4 +1,11 @@
-@import '/vendor/filament/filament/resources/css/theme.css';
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+@source '../../../../app/Livewire/**/*';
+@source '../../../../resources/views/livewire/**/*';
+
 .fi-ta-ctn .py-4 {
     padding-top: .3rem !important;
     padding-bottom: .3rem !important;
@@ -11,4 +18,4 @@
     padding: 4px !important;
     margin: 4px !important;
 }
-@config 'tailwind.config.js';
+

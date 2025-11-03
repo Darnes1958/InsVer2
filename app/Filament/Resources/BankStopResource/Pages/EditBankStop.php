@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BankStopResource\Pages;
 
+use Filament\Actions\DeleteAction;
 use App\Filament\Resources\BankStopResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -14,7 +15,7 @@ class EditBankStop extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
     protected function getRedirectUrl(): ?string

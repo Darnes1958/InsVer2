@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Aksat\Rep;
 
+use Filament\Schemas\Schema;
 use App\Models\aksat\MainArc;
 use App\Models\NewModel\Nmain;
 use App\Models\OverTar\over_kst;
@@ -13,7 +14,6 @@ use App\Models\stores\stores_names;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
@@ -23,9 +23,9 @@ class MainArcModal extends Page implements HasInfolists
 {
     use InteractsWithInfolists;
     protected ?string $heading="";
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.aksat.rep.main-arc-modal';
+    protected string $view = 'filament.pages.aksat.rep.main-arc-modal';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -54,12 +54,12 @@ class MainArcModal extends Page implements HasInfolists
       $this->Main=MainArc::first();
         $this->order_no=sells::find($this->Main->order_no);
     }
-    public function mainArcInfolist(Infolist $infolist): Infolist
+    public function mainArcInfolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
 
             ->record($this->Main)
-            ->schema([
+            ->components([
                 TextEntry::make('name')
                     ->color('primary')
                     ->extraEntryWrapperAttributes(['style' => 'height: 16px;'])

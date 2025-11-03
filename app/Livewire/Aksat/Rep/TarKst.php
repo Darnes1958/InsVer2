@@ -2,13 +2,15 @@
 
 namespace App\Livewire\Aksat\Rep;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
+use Filament\Actions\Action;
 use App\Models\aksat\kst_trans;
 use App\Models\aksat\main;
 use App\Models\OverTar\over_kst;
 use App\Models\OverTar\tar_kst;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Model;
@@ -43,21 +45,21 @@ class TarKst extends BaseWidget
             })
             ->queryStringIdentifier('TraKst')
             ->columns([
-                Tables\Columns\TextColumn::make('tar_type')
+                TextColumn::make('tar_type')
 
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">ترجيع مبالغ&nbsp;&nbsp;</span>')),
 
-                Tables\Columns\TextColumn::make('tar_date')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('tar_date')
+                    ->size(TextSize::ExtraSmall)
                     ->label('التاريخ'),
-                Tables\Columns\TextColumn::make('kst')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('kst')
+                    ->size(TextSize::ExtraSmall)
                     ->label('المبلغ'),
 
             ])
-            ->actions([
-                Tables\Actions\Action::make('del')
+            ->recordActions([
+                Action::make('del')
                     ->iconButton()
                     ->icon('heroicon-o-trash')
                     ->iconSize(IconSize::Small)

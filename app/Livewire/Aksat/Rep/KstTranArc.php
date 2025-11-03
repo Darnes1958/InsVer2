@@ -2,11 +2,12 @@
 
 namespace App\Livewire\Aksat\Rep;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
 use App\Models\aksat\kst_trans;
 use App\Models\aksat\main;
 use App\Models\aksat\TransArc;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Livewire\Attributes\On;
@@ -35,35 +36,35 @@ class KstTranArc extends BaseWidget
             })
             ->queryStringIdentifier('KstTranArc')
             ->columns([
-                Tables\Columns\TextColumn::make('ser')
+                TextColumn::make('ser')
                     ->action(function(kst_trans $record){
                         info($record->no);
                     })
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->color('primary')
                     ->sortable()
                     ->label('ت'),
-                Tables\Columns\TextColumn::make('kst_date')
+                TextColumn::make('kst_date')
                     ->toggleable()
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->sortable()
                     ->label('ت.الاستحقاق'),
-                Tables\Columns\TextColumn::make('ksm_date')
+                TextColumn::make('ksm_date')
                     ->toggleable()
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->sortable()
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label('ت.الخصم'),
-                Tables\Columns\TextColumn::make('ksm')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('ksm')
+                    ->size(TextSize::ExtraSmall)
                     ->label('الخصم'),
-                Tables\Columns\TextColumn::make('ksm_type')
+                TextColumn::make('ksm_type')
                     ->toggleable()
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label('طريقة الدفع'),
 
 
-                Tables\Columns\TextColumn::make('kst_note')
+                TextColumn::make('kst_note')
                     ->toggleable()
                     ->label('ملاحظات'),
             ]);

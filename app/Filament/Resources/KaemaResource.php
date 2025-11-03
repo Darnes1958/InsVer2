@@ -2,12 +2,15 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use App\Filament\Resources\KaemaResource\Pages\ListKaemas;
+use App\Filament\Resources\KaemaResource\Pages\CreateKaema;
+use App\Filament\Resources\KaemaResource\Pages\EditKaema;
 use App\Filament\Resources\KaemaResource\Pages;
 use App\Filament\Resources\KaemaResource\RelationManagers;
 
 use App\Models\excel\Kaema;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -20,16 +23,16 @@ class KaemaResource extends Resource
 {
     protected static ?string $model = Kaema::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function shouldRegisterNavigation(): bool
     {
         return  auth()->user()->id==1;
     }
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
             ]);
     }
@@ -58,10 +61,10 @@ class KaemaResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 //
             ])
-            ->bulkActions([
+            ->toolbarActions([
               //
             ]);
     }
@@ -76,9 +79,9 @@ class KaemaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListKaemas::route('/'),
-            'create' => Pages\CreateKaema::route('/create'),
-            'edit' => Pages\EditKaema::route('/{record}/edit'),
+            'index' => ListKaemas::route('/'),
+            'create' => CreateKaema::route('/create'),
+            'edit' => EditKaema::route('/{record}/edit'),
         ];
     }
 }

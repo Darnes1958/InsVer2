@@ -2,11 +2,12 @@
 
 namespace App\Livewire\Aksat\Rep;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
 use App\Models\aksat\kst_trans;
 use App\Models\OverTar\over_kst;
 use App\Models\OverTar\over_kst_a;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Support\HtmlString;
@@ -36,15 +37,15 @@ class OverKstArc extends BaseWidget
             })
             ->queryStringIdentifier('OverKstArc')
             ->columns([
-                Tables\Columns\TextColumn::make('ser')
+                TextColumn::make('ser')
                     ->rowIndex()
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label('ت'),
-                Tables\Columns\TextColumn::make('tar_date')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('tar_date')
+                    ->size(TextSize::ExtraSmall)
                     ->label('التاريخ'),
-                Tables\Columns\TextColumn::make('kst')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('kst')
+                    ->size(TextSize::ExtraSmall)
                     ->label('المبلغ'),
 
             ]);

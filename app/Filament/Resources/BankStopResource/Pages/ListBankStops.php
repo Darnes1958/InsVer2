@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BankStopResource\Pages;
 
+use Filament\Actions\CreateAction;
 use App\Filament\Resources\BankStopResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -14,7 +15,7 @@ class ListBankStops extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('إضافة'),
+            CreateAction::make()->label('إضافة'),
         ];
     }
 }

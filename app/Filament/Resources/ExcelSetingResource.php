@@ -2,12 +2,16 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use App\Filament\Resources\ExcelSetingResource\Pages\ListExcelSetings;
+use App\Filament\Resources\ExcelSetingResource\Pages\CreateExcelSeting;
+use App\Filament\Resources\ExcelSetingResource\Pages\EditExcelSeting;
 use App\Filament\Resources\ExcelSetingResource\Pages;
 use App\Filament\Resources\ExcelSetingResource\RelationManagers;
 use App\Models\ExcelSeting;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -18,14 +22,14 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ExcelSetingResource extends Resource
 {
     protected static ?string $model = ExcelSeting::class;
-    protected static ?string $navigationGroup='Setting';
+    protected static string | \UnitEnum | null $navigationGroup='Setting';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('bank')->required(),
                 TextInput::make('headRowNo')->required(),
                 TextInput::make('ksm_date')->required(),
@@ -49,10 +53,10 @@ class ExcelSetingResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 //
             ]);
     }
@@ -67,9 +71,9 @@ class ExcelSetingResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListExcelSetings::route('/'),
-            'create' => Pages\CreateExcelSeting::route('/create'),
-            'edit' => Pages\EditExcelSeting::route('/{record}/edit'),
+            'index' => ListExcelSetings::route('/'),
+            'create' => CreateExcelSeting::route('/create'),
+            'edit' => EditExcelSeting::route('/{record}/edit'),
         ];
     }
 }

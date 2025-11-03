@@ -2,6 +2,12 @@
 
 namespace App\Livewire\Aksat\Rep;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
+use Filament\Actions\Action;
+use Exception;
+use Filament\Schemas\Components\Section;
+use Filament\Tables\Enums\RecordActionsPosition;
 use App\Enums\KsmType;
 use App\Models\aksat\kst_trans;
 use App\Models\aksat\main;
@@ -11,13 +17,11 @@ use App\Models\Operations;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -68,35 +72,35 @@ class KstTran extends BaseWidget
             })
             ->queryStringIdentifier('KstTran')
             ->columns([
-                Tables\Columns\TextColumn::make('ser')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('ser')
+                    ->size(TextSize::ExtraSmall)
                     ->color('primary')
                     ->sortable()
                     ->label('ت'),
-                Tables\Columns\TextColumn::make('kst_date')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('kst_date')
+                    ->size(TextSize::ExtraSmall)
                     ->toggleable()
                     ->sortable()
                     ->label('ت.الاستحقاق'),
-                Tables\Columns\TextColumn::make('ksm_date')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('ksm_date')
+                    ->size(TextSize::ExtraSmall)
                     ->toggleable()
                     ->sortable()
                     ->label('ت.الخصم'),
-                Tables\Columns\TextColumn::make('ksm')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('ksm')
+                    ->size(TextSize::ExtraSmall)
                     ->label('الخصم'),
-                Tables\Columns\TextColumn::make('ksm_type')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('ksm_type')
+                    ->size(TextSize::ExtraSmall)
                     ->toggleable()
                     ->label('طريقة الدفع'),
-                Tables\Columns\TextColumn::make('kst_notes')
+                TextColumn::make('kst_notes')
                     ->toggleable()
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label('ملاحظات'),
             ])
-            ->actions([
-                Tables\Actions\Action::make('del')
+            ->recordActions([
+                Action::make('del')
                     ->iconButton()
                     ->icon('heroicon-o-trash')
                     ->iconSize(IconSize::Small)
@@ -125,7 +129,7 @@ class KstTran extends BaseWidget
                             $this->dispatch('showMe',no: $this->no);
                             DB::connection(Auth()->user()->company)->commit();
 
-                        } catch (\Exception $e) {
+                        } catch (Exception $e) {
                             DB::connection(Auth()->user()->company)->rollback();
                             info($e);
                             Notification::make()
@@ -135,8 +139,8 @@ class KstTran extends BaseWidget
                         }
 
                     }),
-                Tables\Actions\Action::make('edit')
-                    ->form([
+                Action::make('edit')
+                    ->schema([
                         Section::make([
                             Radio::make('ksm_type')
                              ->hiddenLabel()
@@ -182,10 +186,10 @@ class KstTran extends BaseWidget
                     ->color('blue')
 
 
-            ], position: Tables\Enums\ActionsPosition::BeforeColumns);
+            ], position: RecordActionsPosition::BeforeColumns);
     }
 
-    protected function paginateTableQuery(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Contracts\Pagination\Paginator
+    protected function paginateTableQuery(Builder $query): Paginator
     {
         $perPage = $this->getTableRecordsPerPage();
 

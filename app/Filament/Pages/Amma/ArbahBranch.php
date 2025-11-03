@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Amma;
 
+use Filament\Schemas\Schema;
 use App\Livewire\Traits\PublicTrait;
 use App\Models\aksat\main_sells_bank_view;
 use App\Models\aksat\place;
@@ -9,7 +10,6 @@ use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -24,9 +24,9 @@ class ArbahBranch extends Page  implements HasForms,HasTable
     use InteractsWithForms,InteractsWithTable;
     use PublicTrait;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.amma.arbah-branch';
+    protected string $view = 'filament.pages.amma.arbah-branch';
 
     protected ?string $heading='تقرير بالارباح حسب المصارف ونقاط البيع';
     protected static ?string $navigationLabel='الارباح حسب المصارف واماكن الييع';
@@ -38,7 +38,7 @@ class ArbahBranch extends Page  implements HasForms,HasTable
     public $Date1;
     public $Date2;
 
-    public function getTableRecordKey(Model $record): string
+    public function getTableRecordKey(Model|array $record): string
     {
      return $record->place_name;
     }
@@ -52,10 +52,10 @@ class ArbahBranch extends Page  implements HasForms,HasTable
         $this->form->fill(['Date1' => $this->Date1, 'Date2' => $this->Date2]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 DatePicker::make('Date1')
                     ->afterStateUpdated(function ($state) {$this->Date1=$state;})
                     ->live()

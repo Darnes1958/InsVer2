@@ -2,11 +2,12 @@
 
 namespace App\Livewire\Aksat\Rep;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
 use App\Models\aksat\MainArc;
 use App\Models\OverTar\over_kst_a;
 use App\Models\OverTar\tar_kst;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Model;
@@ -42,24 +43,24 @@ class ContArc extends BaseWidget
 
             ->recordUrl(null)
             ->columns([
-                Tables\Columns\TextColumn::make('no')
+                TextColumn::make('no')
                     ->action(function (MainArc $record){$this->Do($record->no);})
                     ->tooltip('انقر للعرض')
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">عقود سابقة&nbsp;&nbsp;</span>')),
-                Tables\Columns\TextColumn::make('sul_date')
+                TextColumn::make('sul_date')
                     ->action(function (MainArc $record){$this->Do($record->no);})
                     ->tooltip('انقر للعرض')
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label('التاريخ'),
 
-                Tables\Columns\TextColumn::make('sul')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('sul')
+                    ->size(TextSize::ExtraSmall)
                     ->tooltip('انقر للعرض')
                     ->action(function (MainArc $record){$this->Do($record->no);})
                     ->label('الاجمالي'),
-                Tables\Columns\TextColumn::make('kst')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('kst')
+                    ->size(TextSize::ExtraSmall)
                     ->tooltip('انقر للعرض')
                     ->action(function (MainArc $record){$this->Do($record->no);})
                     ->label('القسط'),

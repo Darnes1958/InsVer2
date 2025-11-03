@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Livewire\Aksat\Rep;
+use Filament\Support\Enums\TextSize;
 use App\Models\sell\sell_tran;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Support\HtmlString;
@@ -29,12 +29,12 @@ class MainItem extends BaseWidget
                 return $main;
             })
             ->columns([
-                Tables\Columns\TextColumn::make('item_no')
+                TextColumn::make('item_no')
                     ->color('primary')
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">رقم الصنف</span>')),
-                Tables\Columns\TextColumn::make('item.item_name')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('item.item_name')
+                    ->size(TextSize::ExtraSmall)
                     ->limit(25)
                     ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
@@ -45,21 +45,21 @@ class MainItem extends BaseWidget
                     })
                     ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">اسم الصنف</span>')),
 
-                Tables\Columns\TextColumn::make('quant')
+                TextColumn::make('quant')
                     ->numeric(
                         decimalPlaces: 0,
                         decimalSeparator: '',
                         thousandsSeparator: '',
                     )
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">الكمية</span>')),
-                Tables\Columns\TextColumn::make('price')
+                TextColumn::make('price')
                     ->numeric(
                         decimalPlaces: 2,
                         decimalSeparator: '.',
                         thousandsSeparator: ',',
                     )
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">السعر</span>')),
             ]);
     }}

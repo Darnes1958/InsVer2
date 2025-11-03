@@ -2,6 +2,10 @@
 
 namespace App\Filament\Resources\FromExcelResource\Pages;
 
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use EightyNine\ExcelImport\ExcelImportAction;
 use App\Filament\Resources\FromExcelResource;
 use App\Filament\Resources\FromExcelResource\Widgets\FromExcelWidget;
 use App\Imports\FromExcelImport;
@@ -23,8 +27,6 @@ use App\Traits\AksatTrait;
 use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
@@ -41,7 +43,7 @@ class ListFromExcels extends ListRecords
     {
         return [
 
-            Actions\Action::make('Do')
+            Action::make('Do')
                 ->color('success')
                 ->fillForm(function (){
                     $bank=Auth::user()->empno;
@@ -55,7 +57,7 @@ class ListFromExcels extends ListRecords
                     } else $taj=null;
                     return ['taj' => $taj,'bank'=>Auth::user()->empno,];
                 })
-                ->form([
+                ->schema([
                     Select::make('bank')
                         ->options(ExcelSeting::all()->pluck('bank','id'))
                         ->label('المصرف')
@@ -91,7 +93,7 @@ class ListFromExcels extends ListRecords
 
                 }),
 
-            \EightyNine\ExcelImport\ExcelImportAction::make()
+            ExcelImportAction::make()
                 ->slideOver()
                 ->before(function (){
                     FromExcel::truncate();
@@ -121,7 +123,7 @@ class ListFromExcels extends ListRecords
                 })
                 ->color('danger')
                 ->use(FromExcelImport::class),
-          Actions\Action::make('Tarheel aksat')
+          Action::make('Tarheel aksat')
               ->disabled()
             ->action(function () {
                 $res = FromExcel::query()->orderBy('acc')->get();

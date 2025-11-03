@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Aksat\Rep;
 
+use Filament\Schemas\Schema;
 use App\Enums\BankTaj;
 use App\Enums\Morahel;
 use App\Enums\Mosahah;
@@ -14,7 +15,6 @@ use App\Models\bank\BankTajmeehy;
 use App\Models\OverTar\over_kst;
 use App\Models\OverTar\tar_kst;
 use App\Models\OverTar\wrong_Kst;
-use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -22,7 +22,6 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Tables\Columns\Summarizers\Sum;
@@ -39,10 +38,10 @@ class Wrong extends Page implements HasForms,HasTable
     use PublicTrait;
 
     protected static ?string $model =wrong_Kst::class;
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.aksat.rep.wrong';
-    protected static ?string $navigationGroup='فائض وترجيع';
+    protected string $view = 'filament.pages.aksat.rep.wrong';
+    protected static string | \UnitEnum | null $navigationGroup='فائض وترجيع';
     protected static ?string $navigationLabel='بالخطأ';
     protected static ?int $navigationSort=7;
     protected ?string $heading='أقساط واردة بالخطأ';
@@ -60,10 +59,10 @@ class Wrong extends Page implements HasForms,HasTable
     public $Date1;
     public $Date2;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Radio::make('By')
                     ->hiddenLabel()
                     ->afterStateUpdated(function ($state) {$this->By=$state;})
@@ -150,15 +149,15 @@ class Wrong extends Page implements HasForms,HasTable
                 ]
 
             )
-            ->actions([
-                \Filament\Tables\Actions\Action::make('تصحيح')
+            ->recordActions([
+                \Filament\Actions\Action::make('تصحيح')
                     ->label('')
                     ->icon('heroicon-o-check')
                     ->iconButton()
                     ->visible(function ($record){return $record->morahel->value==0;})
                     ->color('success')
-                    ->modalSubmitAction(fn (StaticAction $action) => $action->label('تصحيح'))
-                    ->form([
+                    ->modalSubmitAction(fn (\Filament\Actions\Action $action) => $action->label('تصحيح'))
+                    ->schema([
                         Select::make('main_id')
                             ->label('العقد')
                             ->options(function ($record) {

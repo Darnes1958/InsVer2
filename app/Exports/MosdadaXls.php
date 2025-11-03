@@ -1,6 +1,8 @@
 <?php
 namespace App\Exports;
 
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use App\Invoice;
 use App\Models\aksat\main_view;
 use App\Models\bank\bank;
@@ -56,19 +58,19 @@ class MosdadaXls implements FromCollection,WithMapping, WithHeadings,
                 $event->sheet
                     ->getStyle('A8:I8')
                     ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()
                     ->setARGB('E8E1E1');
 
                 $event->sheet->getDelegate()->getStyle('B')
                     ->getAlignment()
-                    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                    ->setHorizontal(Alignment::HORIZONTAL_RIGHT);
                 $event->sheet->getDelegate()->getStyle('D')
                     ->getAlignment()
-                    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $event->sheet->getDelegate()->getStyle('F')
                     ->getAlignment()
-                    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $event->sheet->setCellValue('D6', 'كشف بالعقود المسددة بتاريخ '.date('Y-m-d'));
                 $event->sheet->setCellValue('B'.$this->rowcount+9, 'الإجمالي');
                 $event->sheet->setCellValue('E'.$this->rowcount+9, $this->sul);
@@ -77,7 +79,7 @@ class MosdadaXls implements FromCollection,WithMapping, WithHeadings,
                 $event->sheet
                     ->getStyle('A'.($this->rowcount+9).':I'.$this->rowcount+9)
                     ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()
                     ->setARGB('E8E1E1');
                 $event->sheet->getDelegate()->setRightToLeft(true);

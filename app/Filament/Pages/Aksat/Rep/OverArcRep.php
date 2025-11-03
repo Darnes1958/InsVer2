@@ -2,6 +2,10 @@
 
 namespace App\Filament\Pages\Aksat\Rep;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use App\Enums\BankTaj;
 use App\Enums\Morahel;
 use App\Livewire\AKsat\Rep\OverKst;
@@ -12,19 +16,15 @@ use App\Models\OverTar\over_kst;
 use App\Models\OverTar\over_kst_a;
 use App\Models\OverTar\stop_kst;
 use App\Models\OverTar\tar_kst;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
-use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -40,13 +40,13 @@ class OverArcRep extends Page implements HasForms,HasTable
     use PublicTrait;
 
     protected static ?string $model =over_kst::class;
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.aksat.rep.over-rep';
+    protected string $view = 'filament.pages.aksat.rep.over-rep';
     protected static ?string $navigationLabel='الفائض من الأرشيف';
     protected static ?int $navigationSort=6;
     protected ?string $heading='الخصم بالفائض من الأرشيف';
-    protected static ?string $navigationGroup='فائض وترجيع';
+    protected static string | \UnitEnum | null $navigationGroup='فائض وترجيع';
     public static function shouldRegisterNavigation(): bool
     {
         return Auth::user()->can('فائض وترجيع');
@@ -60,10 +60,10 @@ class OverArcRep extends Page implements HasForms,HasTable
     public $Date1;
     public $Date2;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                Radio::make('By')
                 ->hiddenLabel()
                 ->afterStateUpdated(function ($state) {$this->By=$state;})
@@ -165,8 +165,8 @@ class OverArcRep extends Page implements HasForms,HasTable
                             thousandsSeparator: ',',
                         ),
             ])
-            ->actions([
-                \Filament\Tables\Actions\Action::make('tar')
+            ->recordActions([
+                Action::make('tar')
                     ->label('ترجيع')
                 ->visible(function ($record){return $record->letters==0;})
                 ->requiresConfirmation()
@@ -178,7 +178,7 @@ class OverArcRep extends Page implements HasForms,HasTable
                 })
 
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkAction::make('toTar')
                     ->visible(function (){return $this->letters==0;})
                     ->deselectRecordsAfterCompletion()

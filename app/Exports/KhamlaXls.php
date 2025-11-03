@@ -2,6 +2,8 @@
 namespace App\Exports;
 
 
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use App\Models\aksat\main_view;
 use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
@@ -61,25 +63,25 @@ class KhamlaXls extends DefaultValueBinder implements FromCollection,WithMapping
                 $event->sheet
                     ->getStyle('A8:K8')
                     ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()
                     ->setARGB('E8E1E1');
 
                 $event->sheet->getDelegate()->getStyle('B')
                     ->getAlignment()
-                    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                    ->setHorizontal(Alignment::HORIZONTAL_RIGHT);
                 $event->sheet->getDelegate()->getStyle('D')
                     ->getAlignment()
-                    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $event->sheet->getDelegate()->getStyle('F')
                     ->getAlignment()
-                    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $event->sheet->getDelegate()->getStyle('J')
                     ->getAlignment()
-                    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
               $event->sheet->getDelegate()->getStyle('K')
                 ->getAlignment()
-                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 if ($this->RepRadio=='RepAll')
                  $event->sheet->setCellValue('D6', 'كشف بالعقود الخاملة لمدة '.$this->months.'  شهور .. بتاريخ '.date('Y-m-d'));
@@ -93,7 +95,7 @@ class KhamlaXls extends DefaultValueBinder implements FromCollection,WithMapping
                 $event->sheet
                     ->getStyle('A'.($this->rowcount+9).':J'.$this->rowcount+9)
                     ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()
                     ->setARGB('E8E1E1');
                 $event->sheet->getDelegate()->setRightToLeft(true);

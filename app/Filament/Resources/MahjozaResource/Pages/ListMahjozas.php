@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\MahjozaResource\Pages;
 
+use Filament\Actions\Action;
+use EightyNine\ExcelImport\ExcelImportAction;
 use App\Filament\Resources\MahjozaResource;
 use App\Imports\KaemaModelImport;
 use App\Imports\MahjozaModelImport;
@@ -26,8 +28,8 @@ class ListMahjozas extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('Prepere')
-                ->form([
+            Action::make('Prepere')
+                ->schema([
                     Select::make('taj_id')
                         ->options(BankTajmeehy::all()->pluck('TajName', 'TajNo'))
                         ->preload()
@@ -48,11 +50,11 @@ class ListMahjozas extends ListRecords
 
                 })
                 ->color('success'),
-            \EightyNine\ExcelImport\ExcelImportAction::make()
+            ExcelImportAction::make()
                 ->slideOver()
                 ->color('danger')
                 ->use(MahjozaModelImport::class),
-            Actions\Action::make('Do')
+            Action::make('Do')
 
                 ->action(function (){
                     Mahjoza::where('Taj',null)->update(['Taj' => $this->taj_id]);

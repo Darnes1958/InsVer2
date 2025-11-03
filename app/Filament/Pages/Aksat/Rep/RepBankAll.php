@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Aksat\Rep;
 
+use Filament\Schemas\Components\Section;
 use App\Exports\KhamlaXls;
 use App\Exports\Khasf;
 use App\Exports\MosdadaXls;
@@ -15,7 +16,6 @@ use App\Models\Wrongkst;
 use App\Traits\reportTrait;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -35,9 +35,9 @@ use Maatwebsite\Excel\Facades\Excel;
 class RepBankAll extends Page implements HasForms,HasTable
 {
     use InteractsWithForms,InteractsWithTable,reportTrait;
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.aksat.rep.rep-bank-all';
+    protected string $view = 'filament.pages.aksat.rep.rep-bank-all';
 
     protected static ?string $navigationLabel='اجمالي المصارف';
     protected ?string $heading='';
@@ -62,7 +62,7 @@ class RepBankAll extends Page implements HasForms,HasTable
         return array_merge(parent::getForms(), [
             "bankForm" => $this->makeForm()
                 ->model(bank::class)
-                ->schema($this->getbankFormSchema())
+                ->components($this->getbankFormSchema())
                 ->statePath('bankData'),
 
         ]);

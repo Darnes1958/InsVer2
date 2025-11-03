@@ -2,6 +2,9 @@
 
 namespace App\Filament\Pages\Aksat\Rep;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\Action;
 use App\Enums\BankTaj;
 use App\Enums\Morahel;
 use App\Livewire\AKsat\Rep\OverKst;
@@ -10,14 +13,11 @@ use App\Models\bank\bank;
 use App\Models\bank\BankTajmeehy;
 use App\Models\OverTar\over_kst;
 use App\Models\OverTar\tar_kst;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
@@ -35,10 +35,10 @@ class OverRep extends Page implements HasForms,HasTable
     use PublicTrait;
 
     protected static ?string $model =over_kst::class;
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.aksat.rep.over-rep';
-    protected static ?string $navigationGroup='فائض وترجيع';
+    protected string $view = 'filament.pages.aksat.rep.over-rep';
+    protected static string | \UnitEnum | null $navigationGroup='فائض وترجيع';
     protected static ?string $navigationLabel='الفائض';
     protected static ?int $navigationSort=5;
     protected ?string $heading='الخصم بالفائض';
@@ -55,10 +55,10 @@ class OverRep extends Page implements HasForms,HasTable
     public $Date1;
     public $Date2;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                Radio::make('By')
                 ->hiddenLabel()
                 ->afterStateUpdated(function ($state) {$this->By=$state;})
@@ -162,8 +162,8 @@ class OverRep extends Page implements HasForms,HasTable
             ]
 
             )
-            ->actions([
-                \Filament\Tables\Actions\Action::make('tar')
+            ->recordActions([
+                Action::make('tar')
                     ->label('ترجيع')
                     ->visible(function ($record){return $record->letters==0;})
                     ->requiresConfirmation()

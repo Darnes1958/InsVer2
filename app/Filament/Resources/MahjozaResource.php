@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use App\Filament\Resources\MahjozaResource\Pages\ListMahjozas;
+use App\Filament\Resources\MahjozaResource\Pages\CreateMahjoza;
+use App\Filament\Resources\MahjozaResource\Pages\EditMahjoza;
 use App\Filament\Resources\MahjozaResource\Pages;
 use App\Filament\Resources\MahjozaResource\RelationManagers;
 use App\Models\excel\Mahjoza;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -19,12 +22,12 @@ class MahjozaResource extends Resource
 {
     protected static ?string $model = Mahjoza::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
             ]);
     }
@@ -53,10 +56,10 @@ class MahjozaResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                //
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 //
             ]);
     }
@@ -71,9 +74,9 @@ class MahjozaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMahjozas::route('/'),
-            'create' => Pages\CreateMahjoza::route('/create'),
-            'edit' => Pages\EditMahjoza::route('/{record}/edit'),
+            'index' => ListMahjozas::route('/'),
+            'create' => CreateMahjoza::route('/create'),
+            'edit' => EditMahjoza::route('/{record}/edit'),
         ];
     }
 }

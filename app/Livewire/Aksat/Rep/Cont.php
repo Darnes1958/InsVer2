@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Aksat\Rep;
 
+use Filament\Support\Enums\TextSize;
 use App\Models\aksat\main;
 use App\Models\aksat\MainArc;
 use App\Models\OverTar\over_kst_a;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Support\HtmlString;
@@ -41,21 +41,21 @@ class Cont extends BaseWidget
                 TextColumn::make('no')
                     ->action(function (main $record){$this->Do($record->no);})
                     ->tooltip('انقر للعرض')
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">عقود قائمة&nbsp;&nbsp;</span>')),
                 TextColumn::make('sul_date')
                     ->action(function (main $record){$this->Do($record->no);})
                     ->tooltip('انقر للعرض')
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label('التاريخ'),
 
                 TextColumn::make('sul')
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->tooltip('انقر للعرض')
                     ->action(function (main $record){$this->Do($record->no);})
                     ->label('الاجمالي'),
                 TextColumn::make('kst')
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->tooltip('انقر للعرض')
                     ->action(function (main $record){$this->Do($record->no);})
                     ->label('القسط'),

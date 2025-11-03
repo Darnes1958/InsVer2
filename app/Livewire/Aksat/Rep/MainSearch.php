@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Aksat\Rep;
 
+use Filament\Support\Enums\TextSize;
 use App\Models\aksat\Contract;
 use App\Models\aksat\main;
 use App\Models\bank\bank;
@@ -12,7 +13,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use PhpParser\Node\Expr\BinaryOp\Mod;
 use Filament\Tables\Columns\TextColumn;
 
@@ -70,12 +70,12 @@ class MainSearch extends BaseWidget
              return $main;
             })
             ->columns([
-              Tables\Columns\TextColumn::make('no')
+              TextColumn::make('no')
                   ->action(function (main $record){
                       $this->Do($record->no,$record->order_no,$record->jeha);
                   })
                   ->color('primary')
-                  ->size(TextColumnSize::ExtraSmall)
+                  ->size(TextSize::ExtraSmall)
                   ->label(new HtmlString('<span  style="font-size: smaller;">الرقم</span>')),
               TextColumn::make('name')
                   ->searchable()
@@ -90,14 +90,14 @@ class MainSearch extends BaseWidget
                       }
                       return $state;
                   })
-                  ->size(TextColumnSize::ExtraSmall)
+                  ->size(TextSize::ExtraSmall)
                   ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">الاسم</span>')),
               TextColumn::make('acc')
                   ->searchable()
                   ->action(function (main $record){
                       $this->Do($record->no,$record->order_no,$record->jeha);
                   })
-                  ->size(TextColumnSize::ExtraSmall)
+                  ->size(TextSize::ExtraSmall)
                   ->color('info')
                   ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">رقم الحساب</span>')),
               TextColumn::make('sul')
@@ -109,7 +109,7 @@ class MainSearch extends BaseWidget
                       decimalSeparator: '',
                       thousandsSeparator: ',',
                   )
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                   ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">الاجمالي</span>')),
               TextColumn::make('kst')
                   ->action(function (main $record){
@@ -120,7 +120,7 @@ class MainSearch extends BaseWidget
                       decimalSeparator: '',
                       thousandsSeparator: '',
                   )
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">القسط</span>')),
             ])
             ;

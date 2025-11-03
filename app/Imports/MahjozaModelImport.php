@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 
+use Illuminate\Database\Eloquent\Model;
 use App\Models\excel\Mahjoza;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -11,10 +12,10 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 class MahjozaModelImport implements ToModel, WithHeadingRow
 {
 /**
- * @param array $row
- *
- * @return \Illuminate\Database\Eloquent\Model|null
- */
+   * @param array $row
+   *
+   * @return Model|null
+   */
   public function model(array $row)
 {
 

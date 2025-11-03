@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use Illuminate\Database\Eloquent\Model;
 use App\Models\ExcelSeting;
 use App\Models\FromExcel;
 use Carbon\Carbon;
@@ -15,10 +16,10 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 class FromExcelImport implements ToModel, WithHeadingRow
 {
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @param array $row
+     *
+     * @return Model|null
+     */
     public function model(array $row)
     {
 

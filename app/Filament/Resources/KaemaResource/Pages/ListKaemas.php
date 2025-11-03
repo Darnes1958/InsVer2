@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\KaemaResource\Pages;
 
+use Filament\Actions\Action;
+use EightyNine\ExcelImport\ExcelImportAction;
 use App\Filament\Resources\KaemaResource;
 use App\Imports\FromExcelImport;
 use App\Imports\KaemaModelImport;
@@ -30,8 +32,8 @@ class ListKaemas extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('Prepere')
-                ->form([
+            Action::make('Prepere')
+                ->schema([
                     Select::make('taj_id')
                         ->options(BankTajmeehy::all()->pluck('TajName', 'TajNo'))
                         ->preload()
@@ -52,11 +54,11 @@ class ListKaemas extends ListRecords
 
                 })
                 ->color('success'),
-            \EightyNine\ExcelImport\ExcelImportAction::make()
+            ExcelImportAction::make()
                 ->slideOver()
                 ->color('danger')
                 ->use(KaemaModelImport::class),
-            Actions\Action::make('Do')
+            Action::make('Do')
 
              ->action(function (){
                  Kaema::where('Taj',null)->update(['Taj' => $this->taj_id]);

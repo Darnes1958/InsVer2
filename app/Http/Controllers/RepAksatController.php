@@ -21,7 +21,7 @@ class RepAksatController extends Controller
 {
     public  function convertToArabic($html, int $line_length = 100, bool $hindo = false, $forcertl = false): string
     {
-        $Arabic = new \ArPHP\I18N\Arabic();
+        $Arabic = new Arabic();
         $p = $Arabic->arIdentify($html);
 
         for ($i = count($p) - 1; $i >= 0; $i -= 2) {

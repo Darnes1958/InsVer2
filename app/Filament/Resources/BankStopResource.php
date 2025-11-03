@@ -2,6 +2,15 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use App\Filament\Resources\BankStopResource\Pages\ListBankStops;
+use App\Filament\Resources\BankStopResource\Pages\CreateBankStop;
+use App\Filament\Resources\BankStopResource\Pages\EditBankStop;
 use App\Filament\Resources\BankStopResource\Pages;
 use App\Filament\Resources\BankStopResource\RelationManagers;
 use App\Livewire\Traits\PublicTrait;
@@ -15,8 +24,6 @@ use Filament\Forms;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -30,13 +37,13 @@ class BankStopResource extends Resource
     use PublicTrait;
     protected static ?string $model = BankStop::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel='مرتبات موقوفة';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('no')
                     ->relationship('main','name')
                         ->getOptionLabelFromRecordUsing(fn (Main $record) => "{$record->name} {$record->acc}")
@@ -49,7 +56,7 @@ class BankStopResource extends Resource
                         $set('taj_id',main::find($state)->taj_id);
                     })
                     ->required(),
-                Forms\Components\DatePicker::make('stop_date')
+                DatePicker::make('stop_date')
                     ->label('تاريخ التوقف')
                     ->required(),
                 TextInput::make('notes')
@@ -72,15 +79,15 @@ class BankStopResource extends Resource
                 self::getMy('notes'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('taj_id')
+                SelectFilter::make('taj_id')
                 ->relationship('BankTajmeehy','TajName')
                 ->label('المصرف التجميعي'),
 
                 Filter::make('created_at')
-                    ->form([
-                        Forms\Components\DatePicker::make('Date1')
+                    ->schema([
+                        DatePicker::make('Date1')
                             ->label('من تاريخ'),
-                        Forms\Components\DatePicker::make('Date2')
+                        DatePicker::make('Date2')
                             ->label('إلي تاريخ'),
                     ])
                     ->indicateUsing(function (array $data): ?string {
@@ -106,11 +113,11 @@ class BankStopResource extends Resource
                             );
                     }),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 //
             ]);
     }
@@ -125,9 +132,9 @@ class BankStopResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBankStops::route('/'),
-            'create' => Pages\CreateBankStop::route('/create'),
-            'edit' => Pages\EditBankStop::route('/{record}/edit'),
+            'index' => ListBankStops::route('/'),
+            'create' => CreateBankStop::route('/create'),
+            'edit' => EditBankStop::route('/{record}/edit'),
         ];
     }
 }

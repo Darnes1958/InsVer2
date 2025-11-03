@@ -2,6 +2,11 @@
 
 namespace App\Livewire\AKsat\Rep;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Enums\Width;
 use App\Enums\KsmType;
 use App\Models\aksat\kst_trans;
 use App\Models\aksat\main;
@@ -11,13 +16,10 @@ use App\Models\OverTar\tar_kst;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\IconSize;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Model;
@@ -52,21 +54,21 @@ class OverKst extends BaseWidget
             })
             ->queryStringIdentifier('OverKst')
             ->columns([
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->state(fn(Model $record): string=> $record->letters==1?'مرجع':'غيرمرجع')
                     ->color(fn(Model $record): string=> $record->letters==1?'primary':'info')
-                    ->size(TextColumnSize::ExtraSmall)
+                    ->size(TextSize::ExtraSmall)
                     ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">خصم بالفائض&nbsp;&nbsp;</span>')),
-                Tables\Columns\TextColumn::make('tar_date')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('tar_date')
+                    ->size(TextSize::ExtraSmall)
                     ->label('التاريخ'),
-                Tables\Columns\TextColumn::make('kst')
-                    ->size(TextColumnSize::ExtraSmall)
+                TextColumn::make('kst')
+                    ->size(TextSize::ExtraSmall)
                     ->label('المبلغ'),
 
             ])
-            ->actions([
-                Tables\Actions\Action::make('del')
+            ->recordActions([
+                Action::make('del')
                     ->iconButton()
                     ->icon('heroicon-o-trash')
                     ->iconSize(IconSize::Small)
@@ -80,8 +82,8 @@ class OverKst extends BaseWidget
                        $record->delete();
                         $this->dispatch('showMe',no: $this->no);
                     }),
-                Tables\Actions\Action::make('tar')
-                    ->form([
+                Action::make('tar')
+                    ->schema([
                         Section::make([
                             Radio::make('ksm_type')
                                 ->hiddenLabel()
@@ -102,7 +104,7 @@ class OverKst extends BaseWidget
                     ->modalCancelActionLabel('عودة')
                     ->modalSubmitActionLabel('تحزين')
                     ->modalHeading('ترجيع مبلغ')
-                    ->modalWidth(MaxWidth::Small)
+                    ->modalWidth(Width::Small)
                     ->action(function (array $data,over_kst $record,){
                         $record->update(['letters'=>1]);
                         $main=main::find($this->no)->first();

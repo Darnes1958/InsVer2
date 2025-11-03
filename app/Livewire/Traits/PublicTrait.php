@@ -4,6 +4,8 @@ namespace App\Livewire\Traits;
 
 
 
+use Spatie\LaravelPdf\Facades\Pdf;
+use Exception;
 use App\Enums\TarType;
 use App\Models\aksat\kst_trans;
 use App\Models\aksat\main;
@@ -60,7 +62,7 @@ trait PublicTrait {
     public static function ret_spatie($res,$blade,$arr=[])
     {
         if(!\Illuminate\Support\Facades\File::exists(Auth::user()->company)) \Illuminate\Support\Facades\File::makeDirectory(Auth::user()->company);
-        \Spatie\LaravelPdf\Facades\Pdf::view($blade,
+        Pdf::view($blade,
             ['res'=>$res,'arr'=>$arr])
             ->footerView('PrnView.footer')
             ->withBrowsershot(function (Browsershot $shot) {
@@ -74,7 +76,7 @@ trait PublicTrait {
     }
     public static function ret_spatie_land($res,$blade,$arr=[])
     {
-        \Spatie\LaravelPdf\Facades\Pdf::view($blade,
+        Pdf::view($blade,
             ['res'=>$res,'arr'=>$arr])
             ->footerView('PrnView.footer')
             ->withBrowsershot(function (Browsershot $shot) {
@@ -162,7 +164,7 @@ trait PublicTrait {
             DB::connection(Auth()->user()->company)->commit();
 
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::connection(Auth()->user()->company)->rollback();
 
 
