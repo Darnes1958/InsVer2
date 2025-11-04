@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\AKsat\Rep;
+namespace App\Livewire\Aksat\Rep;
 
 use Filament\Tables\Columns\TextColumn;
 use Filament\Support\Enums\TextSize;

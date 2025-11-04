@@ -16,7 +16,7 @@ class FromExcelWidget extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(function (Dateofexcel $dateofexcel) {
+            ->query(function () {
               $dateofexcel= Dateofexcel::where('taj_id',Auth::user()->IsAdmin);
               return $dateofexcel;
               }
