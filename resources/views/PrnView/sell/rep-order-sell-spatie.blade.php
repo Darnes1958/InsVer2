@@ -55,18 +55,23 @@
     <br>
     <br>
     <br>
-    <label style="margin-right: 12px;"> فاتورة مشتريات رقم :  {{$res->order_no}}</label>
+    <label style="margin-right: 12px;"> فاتورة مبيعات رقم :  {{$res->order_no}}</label>
     <div >
         <label style="margin-right: 12px;" >بتاريخ : </label>
         <label style="font-size: 12px;">{{$res->order_date}}</label>
     </div>
     <div >
-        <label style="margin-right: 12px;" >اسم المورد : </label>
+        <label style="margin-right: 12px;" >اسم الزبون : </label>
         <label >{{$res->Jehatable->jeha_name}}</label>
     </div>
     <div >
         <label style="margin-right: 12px;">صدرت من : </label>
+        @if($res->Storename)
         <label >{{$res->Storename->st_name}}</label>
+        @endif
+        @if($res->Hallname)
+            <label >{{$res->Hallname->hall_name}}</label>
+        @endif
 
     </div>
     <br>

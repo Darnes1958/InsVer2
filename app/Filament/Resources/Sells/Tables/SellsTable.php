@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Filament\Resources\Buys\Tables;
+namespace App\Filament\Resources\Sells\Tables;
 
 use App\Livewire\Traits\PublicTrait;
-
 use App\Models\buy\buys;
-
 use App\Models\Customer;
 use App\Models\jeha\jeha;
-
-
+use App\Models\sell\sells;
 use Carbon\Carbon;
 use Filament\Actions\Action;
-
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
@@ -24,7 +23,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 
-class BuysTable
+class SellsTable
 {
     use PublicTrait;
     public static function configure(Table $table): Table
@@ -62,7 +61,7 @@ class BuysTable
                 SelectFilter::make('jeha')
                     ->options(jeha::all()->pluck('jeha_name', 'jeha_no'))
                     ->searchable()
-                    ->label('مورد معين'),
+                    ->label('جهة معين'),
                 Filter::make('order_date')
                     ->schema([
                         DatePicker::make('Date1')
@@ -94,15 +93,15 @@ class BuysTable
                             );
                     })
             ])
-          //  ->filtersLayout(FiltersLayout::AboveContent)
+            //  ->filtersLayout(FiltersLayout::AboveContent)
             ->filtersFormColumns(3)
             ->recordActions([
                 Action::make('عرض ')
                     ->modalHeading(false)
                     ->modalSubmitAction(false)
                     ->modalCancelAction(fn (Action $action) => $action->label('عودة'))
-                    ->modalContent(fn (buys $record): View => view(
-                        'filament.pages.views.view-buy-tran-widget',
+                    ->modalContent(fn (sells $record): View => view(
+                        'filament.pages.views.view-sell-tran-widget',
                         ['order_no' => $record->order_no],
                     ))
 
@@ -112,14 +111,13 @@ class BuysTable
                     ->icon('heroicon-o-printer')
                     ->iconButton()
                     ->color('blue')
-                    ->action(function (buys $record){
+                    ->action(function (sells $record){
 
                         $cus=Customer::where('Company',Auth::user()->company)->first();
-                        $orderdetail=\App\Models\buy\buy_tran::where('order_no',$record->order_no)->get();
-
+                        $orderdetail=\App\Models\sell\sell_tran::where('order_no',$record->order_no)->get();
 
                         return Response::download(self::ret_spatie($record,
-                            'PrnView.buy.rep-order-buy-spatie',['orderdetail'=>$orderdetail,'cus'=>$cus],
+                            'PrnView.sell.rep-order-sell-spatie',['orderdetail'=>$orderdetail,'cus'=>$cus],
                         ), 'filename.pdf', self::ret_spatie_header());
 
                     })
