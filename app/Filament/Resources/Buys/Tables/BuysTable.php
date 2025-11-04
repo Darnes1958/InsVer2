@@ -2,9 +2,16 @@
 
 namespace App\Filament\Resources\Buys\Tables;
 
+use App\Livewire\Traits\PublicTrait;
+use App\Models\Buy;
+use App\Models\buy\buys;
+use App\Models\Buy_tran;
+use App\Models\Customer;
 use App\Models\jeha\jeha;
+use App\Models\OurCompany;
 use App\Models\Supplier;
 use Carbon\Carbon;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -15,10 +22,14 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 
 class BuysTable
 {
+    use PublicTrait;
     public static function configure(Table $table): Table
     {
         return $table
@@ -89,7 +100,32 @@ class BuysTable
           //  ->filtersLayout(FiltersLayout::AboveContent)
             ->filtersFormColumns(3)
             ->recordActions([
-                //
+                Action::make('عرض ')
+                    ->modalHeading(false)
+                    ->modalSubmitAction(false)
+                    ->modalCancelAction(fn (Action $action) => $action->label('عودة'))
+                    ->modalContent(fn (buys $record): View => view(
+                        'filament.pages.views.view-buy-tran-widget',
+                        ['order_no' => $record->order_no],
+                    ))
+
+                    ->icon('heroicon-o-eye')
+                    ->iconButton(),
+                Action::make('print')
+                    ->icon('heroicon-o-printer')
+                    ->iconButton()
+                    ->color('blue')
+                    ->action(function (buys $record){
+
+                        $cus=Customer::where('Company',Auth::user()->company)->first();
+                        $orderdetail=\App\Models\buy\buy_tran::where('order_no',$record->order_no)->get();
+
+
+                        return Response::download(self::ret_spatie($record,
+                            'PrnView.buy.rep-order-buy-spatie',['orderdetail'=>$orderdetail,'cus'=>$cus],
+                        ), 'filename.pdf', self::ret_spatie_header());
+
+                    })
             ])
             ->toolbarActions([
                 //

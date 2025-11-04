@@ -2,6 +2,7 @@
 
 namespace App\Models\stores;
 
+use App\Models\buy\buy_tran;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,10 @@ class items extends Model
     public function iteminhall()
     {
         return $this->hasMany(halls:: class, 'item_no', 'item_no');
+    }
+    public function Buytran()
+    {
+        return $this->hasMany(buy_tran:: class, 'item_no', 'item_no');
     }
     public static  function search($searchKey,$placetype,$place_no,$NotZero=true)
     {
