@@ -3,14 +3,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Cog\Laravel\Ban\Traits\Bannable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Cog\Contracts\Ban\Bannable as BannableInterface;
 
-class User extends Authenticatable
+class User extends Authenticatable implements BannableInterface
 {
     use  HasRoles, Notifiable;
+    use Bannable;
 
     /**
      * The attributes that are mass assignable.

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Tables\Columns\BanColumn;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
@@ -19,6 +20,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -84,10 +86,31 @@ class UserResource extends Resource
                 TextColumn::make('company')->visibleOn(Auth::id()==1),
                 TextColumn::make('created_at')->label('تاريخ الادخال'),
                 TextColumn::make('updated_at')->label('تاريخ التعديل'),
+                Tables\Columns\IconColumn::make('banned_at')
+                ->label('الحالة')
+                    ->visible(auth()->id()==1)
+                ->state(function (Model $record){
+                    if ($record->isBanned()) return false; else return true;
+                })
+                ->boolean()
+                ->action(function (Model $record){
+                    if ($record->isBanned()) {
+
+                        $record->unban();
+                    } else {
+
+                        $record->ban([
+                            'comment' => 'موقوف من الإدارة',
+                        ]);;
+                    }
+                    $record->save();
+                }),
+
             ])
             ->filters([
                 //
             ])
+            ->recordUrl(false)
             ->recordActions([
                 EditAction::make(),
             ])
