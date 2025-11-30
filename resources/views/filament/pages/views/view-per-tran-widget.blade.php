@@ -1,3 +1,3 @@
 <div>
-    @livewire(\App\Livewire\widget\PerTran::class, ["per_id" => $per_id])
+    @livewire(\App\Livewire\widgets\PerTran::class, ["per_no" => $per_no])
 </div>

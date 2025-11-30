@@ -3,8 +3,16 @@
 namespace App\Providers;
 
 
+use Filament\Actions\CreateAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
@@ -51,6 +59,28 @@ class AppServiceProvider extends ServiceProvider
             ->emptyStateHeading('لا توجد بيانات')
             ->defaultKeySort(false)
         );
+        CreateAction::configureUsing(fn(CreateAction $createAction) => $createAction->label('إضافة'));
+
+        Radio::configureUsing(function (Radio $radio): void {
+            $radio->inline()->inlineLabel()->translateLabel();
+        });
+        TextInput::configureUsing(function (TextInput $input): void {
+            $input->translateLabel();
+        });
+        DatePicker::configureUsing(function (DatePicker $input): void {
+            $input->translateLabel();
+        });
+
+        TextColumn::configureUsing(function (TextColumn $column): void {
+            $column->translateLabel();
+        });
+        IconColumn::configureUsing(function (IconColumn $column): void {
+            $column->translateLabel();
+        });
+        Select::configureUsing(function (Select $column): void {
+            $column->translateLabel();
+        });
+        TextEntry::configureUsing(function (TextEntry $entry): void {$entry->translateLabel();});
 
       Model::unguard();
     }

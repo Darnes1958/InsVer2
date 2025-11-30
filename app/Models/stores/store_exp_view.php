@@ -2,6 +2,7 @@
 
 namespace App\Models\stores;
 
+use App\Enums\PerType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,8 @@ class store_exp_view extends Model
   protected $primaryKey =null;
   public $incrementing = false;
   public $timestamps = false;
+
+  protected $casts=['per_type'=>PerType::class,];
   public function __construct(array $attributes = [])
   {
     parent::__construct($attributes);
