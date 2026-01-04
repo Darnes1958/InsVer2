@@ -17,6 +17,8 @@ class CusTransForm
             ->components([
                 Select::make('customer_id')
                     ->relationship('Customer', 'Company')
+                    ->searchable()
+                    ->preload()
                     ->required()
                     ,
                 DatePicker::make('TransDate')
