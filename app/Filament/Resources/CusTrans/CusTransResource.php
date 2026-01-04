@@ -24,6 +24,7 @@ class CusTransResource extends Resource
     {
         return  auth()->user()->id==1;
     }
+    protected static string | \UnitEnum | null $navigationGroup='Setting';
     public static function form(Schema $schema): Schema
     {
         return CusTransForm::configure($schema);
