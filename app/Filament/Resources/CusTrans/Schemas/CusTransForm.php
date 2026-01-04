@@ -20,11 +20,13 @@ class CusTransForm
                     ->required()
                     ,
                 DatePicker::make('TransDate')
+                    ->default(now())
                     ->required(),
                 TextInput::make('Val')
                     ->required()
                     ->numeric(),
                 Radio::make('ValType')
+                    ->default(2)
                     ->options(CusValType::class)
                     ->required()
             ,
