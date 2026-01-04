@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use App\Enums\CusValType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CusTrans extends Model
 {
-  use HasFactory;
 
-  protected $guarded = [];
   protected $table = 'CusTrans';
+  public function Customer():BelongsTo
+  {
+    return $this->belongsTo(Customer::class);
+  }
+  protected $casts=['ValType'=>CusValType::class];
 
-  public $timestamps = false;
 }

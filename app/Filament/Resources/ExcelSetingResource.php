@@ -21,6 +21,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ExcelSetingResource extends Resource
 {
+    public static function shouldRegisterNavigation(): bool
+    {
+        return  auth()->user()->id==1;
+    }
     protected static ?string $model = ExcelSeting::class;
     protected static string | \UnitEnum | null $navigationGroup='Setting';
 
