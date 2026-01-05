@@ -3,18 +3,21 @@
 namespace App\Models;
 
 use App\Enums\CusValType;
+use App\Enums\SysType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class CusTrans extends Model
 {
 
   protected $table = 'CusTrans';
-  public function Customer():BelongsTo
-  {
-    return $this->belongsTo(Customer::class);
+
+  public function transable(): MorphTo{
+      return $this->morphTo();
   }
-  protected $casts=['ValType'=>CusValType::class];
+
+  protected $casts=['ValType'=>CusValType::class,'transable_type'=>SysType::class];
 
 }

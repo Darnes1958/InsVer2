@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Customer extends Model
 {
@@ -13,8 +14,10 @@ class Customer extends Model
 
 
   public $timestamps = false;
-  public function CusTran() : HasMany
+
+  public function transable()
   {
-     return $this->hasMany(CusTrans::class);
+      return $this->morphMany(CusTrans::class, 'transable');
   }
+
 }

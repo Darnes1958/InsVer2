@@ -15,6 +15,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Svg\Tag\Text;
 
 class CusTransTable
 {
@@ -22,7 +23,9 @@ class CusTransTable
     {
         return $table
             ->columns([
-                TextColumn::make('Customer.Company')
+                TextColumn::make('transable_type')->sortable()->searchable(),
+                TextColumn::make('transable_id')->sortable()->searchable(),
+                TextColumn::make('transable.Company')
                  ->searchable(),
                 TextColumn::make('TransDate')
                     ->date()
@@ -46,8 +49,6 @@ class CusTransTable
             ->filters([
                 SelectFilter::make('ValType')
                  ->options(CusValType::class),
-                SelectFilter::make('customer_id')
-                 ->options(Customer::all()->pluck('Company','id')->toArray()),
                 Filter::make('TransDate')
                     ->schema([
                         DatePicker::make('Date1')
