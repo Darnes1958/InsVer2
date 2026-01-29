@@ -26,7 +26,7 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
           ->defaultThemeMode(ThemeMode::Dark)
-
+            ->resourceCreatePageRedirect('index')
           ->viteTheme('resources/css/filament/admin/theme.css')
             ->breadcrumbs(false)
             ->maxContentWidth('Full')
