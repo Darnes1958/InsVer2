@@ -44,13 +44,15 @@ class ListKaemas extends ListRecords
                         })
                         ->label('المصرف التجميعي'),
                     Checkbox::make('withDelete')
+                        ->live()
                         ->afterStateUpdated(function ($state){
                             $this->withDelete=$state;
                         })
-                        ->default(false)
+
                 ])
+                ->fillForm(['withDelete'=>false])
                 ->action(function (array $data){
-                    if ($this->withDelete)  Kaema::truncate();
+                    if ($data['withDelete'])  Kaema::truncate();
 
                 })
                 ->color('success'),
