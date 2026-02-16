@@ -66,5 +66,11 @@
     "St namee": "من ",
     "Center name": "اسم المكان",
     "Company": "الشركة",
-    "Company id": "الشركة"
+    "Company id": "الشركة",
+    "Tran no":"رقم الإيصال",
+    "Tran date": "تاريخ الايصال",
+    "Jehatable": "الزبون",
+    "Jeha": "الزبون",
+    "Notes": "ملاحظات"
+
 }

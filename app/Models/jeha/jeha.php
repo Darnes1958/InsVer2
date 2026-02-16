@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class jeha extends Model
 {
-    use HasFactory;
+
 
     protected $connection = 'other';
     protected $guarded = [];
@@ -22,6 +22,12 @@ class jeha extends Model
     public function buys(): HasMany
     {
         return $this->hasMany(buys::class,'jeha_no','jeha');
+    }
+    public function jehatype()
+    {
+
+        return $this->belongsTo(jeha_type:: class, 'jeha_type', 'type_no');
+
     }
     public function __construct(array $attributes = [])
     {
@@ -35,38 +41,8 @@ class jeha extends Model
     }
 
 
-    public function jehatype()
-    {
 
-        return $this->belongsTo(jeha_type:: class, 'jeha_type', 'type_no');
 
-    }
-    public function jehaorderbuy()
-    {
-        return $this->hasOne(buys::class,'jeha','jeha_no');
-    }
-    public static  function search($searchKey,$jeha_type=0)
-    {
-        if ($jeha_type==0)
-         return self::on(Auth()->user()->company)
-             ->where('available',1)
-             ->where('jeha_name', 'LIKE', '%' . $searchKey . '%')
 
-             ->orderBy('jeha_name');
-        if ($jeha_type==3)
-            return self::on(Auth()->user()->company)
-                ->where('jeha_type','>',2)
-                ->where('available',1)
-                ->where('jeha_name', 'LIKE', '%' . $searchKey . '%')
-
-                ->orderBy('jeha_name');
-        if ($jeha_type==1 || $jeha_type==2)
-            return self::on(Auth()->user()->company)
-                ->where('jeha_type','=',$jeha_type)
-                ->where('available',1)
-                ->where('jeha_name', 'LIKE', '%' . $searchKey . '%')
-
-                ->orderBy('jeha_name');
-    }
 
 }
