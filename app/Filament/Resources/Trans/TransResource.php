@@ -17,6 +17,7 @@ use Filament\Tables\Table;
 class TransResource extends Resource
 {
     protected static ?string $model = trans::class;
+    protected static ?string $navigationLabel='ايصالات زبائن';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 

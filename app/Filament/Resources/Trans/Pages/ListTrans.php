@@ -72,8 +72,6 @@ class ListTrans extends ListRecords
                     $data['tran_no']=trans::max('tran_no')+1;
                     trans::create($data);
                 }),
-
-
         ];
     }
 }

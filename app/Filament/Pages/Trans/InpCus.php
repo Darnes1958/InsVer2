@@ -59,10 +59,6 @@ class InpCus extends Page implements HasSchemas
                  ->options(TranType::class)->default(1),
                 TextInput::make('notes'),
 
-
-
-
-
             ])->columns(2)
          ]);
     }

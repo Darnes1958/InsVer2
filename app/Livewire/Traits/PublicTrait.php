@@ -4,6 +4,8 @@ namespace App\Livewire\Traits;
 
 
 
+use App\Models\Customer;
+use App\Models\OurCompany;
 use Spatie\LaravelPdf\Facades\Pdf;
 use Exception;
 use App\Enums\TarType;
@@ -62,8 +64,9 @@ trait PublicTrait {
     public static function ret_spatie($res,$blade,$arr=[])
     {
         if(!\Illuminate\Support\Facades\File::exists(Auth::user()->company)) \Illuminate\Support\Facades\File::makeDirectory(Auth::user()->company);
+        $cus=Customer::where('Company',Auth::user()->company)->first();
         Pdf::view($blade,
-            ['res'=>$res,'arr'=>$arr])
+            ['res'=>$res,'arr'=>$arr,'cus'=>$cus])
             ->footerView('PrnView.footer')
             ->withBrowsershot(function (Browsershot $shot) {
                 $shot->noSandbox()

@@ -4,7 +4,9 @@ namespace App\Filament\Resources\Trans\Tables;
 
 use App\Enums\ImpExp;
 use App\Enums\TranType;
+use App\Livewire\Traits\PublicTrait;
 use App\Models\jeha\jeha;
+use App\Models\Receipt;
 use App\Models\trans\trans;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -22,9 +24,11 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 
 class TransTable
 {
+    use PublicTrait;
     public static function configure(Table $table): Table
     {
         return $table
@@ -92,6 +96,19 @@ class TransTable
 
                     }),
                 DeleteAction::make()->iconButton(),
+                Action::make('prn')
+                    ->iconButton()
+                    ->icon(Heroicon::Printer)
+                    ->color('blue')
+                    ->action(function (trans $record) {
+
+                        return Response::download(self::ret_spatie($record,
+                            'PrnView.amma.pdf-Ical',[
+
+                            ]
+                        ), 'filename.pdf', self::ret_spatie_header());
+
+                    })
             ])
             ->toolbarActions([
                 //
