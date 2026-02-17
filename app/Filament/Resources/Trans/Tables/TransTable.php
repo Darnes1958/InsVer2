@@ -74,7 +74,7 @@ class TransTable
                                     ->gt(0)
                                     ->required(),
                                 DatePicker::make('tran_date')
-                                    ->default(\Illuminate\Support\now())
+                                    ->default(date('Y-m-d'))
                                     ->columnSpan(1)
                                     ->required(),
 
