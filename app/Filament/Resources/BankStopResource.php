@@ -2,9 +2,13 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Tables\ItemTable;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TableSelect;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms\Components\DatePicker;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
@@ -58,6 +62,7 @@ class BankStopResource extends Resource
                     ->required(),
                 DatePicker::make('stop_date')
                     ->label('تاريخ التوقف')
+                    ->default(date('Y-m-d'))
                     ->required(),
                 TextInput::make('notes')
                     ->label('ملاحظات'),

@@ -109,7 +109,7 @@ trait reportTrait
         return $main;
     }
     public function retKhamal($bank_no,$TajNo,$By,$months,$khamlaType) {
-        info('i am here');
+
         DB::connection(Auth()->user()->company)->table('late')->delete();
         if ($By=='Bank')
             DB::connection(Auth()->user()->company)->statement( 'insert into late select main.no,DATEDIFF(month,max(ksm_date),getdate()),:emp

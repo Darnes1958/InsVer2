@@ -33,6 +33,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -84,20 +85,14 @@ class Reports extends Page implements HasForms,HasTable
             'from'=>$this->from,
         ]);
     }
-    protected function getForms(): array
-    {
-        return array_merge(parent::getForms(), [
-            "bankForm" => $this->makeForm()
-                ->model(bank::class)
-                ->components($this->getbankFormSchema())
-                ->statePath('bankData'),
 
-        ]);
-    }
 
-    protected function getbankFormSchema(): array
+    protected function bankForm(Schema $schema): Schema
     {
-        return [
+        return $schema
+            ->model(bank::class)
+            ->statePath('bankData')
+           ->components([
             Section::make()
                 ->schema([
                  Select::make('repName')
@@ -236,7 +231,7 @@ class Reports extends Page implements HasForms,HasTable
                     ])->columnSpan(1)
                 ])
                 ->columns(12)
-        ];
+        ]);
     }
 
     public function getTableRecordKey(Model|array $record): string
