@@ -36,7 +36,7 @@ class ContArc extends BaseWidget
 
             ->paginated(false)
             ->defaultSort('sul_date')
-            ->query(function (MainArc $main){
+            ->query(function (){
                 $main=MainArc::where('jeha',$this->jeha);
                 return $main;
             })
@@ -47,7 +47,8 @@ class ContArc extends BaseWidget
                     ->action(function (MainArc $record){$this->Do($record->no);})
                     ->tooltip('انقر للعرض')
                     ->size(TextSize::ExtraSmall)
-                    ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">عقود سابقة&nbsp;&nbsp;</span>')),
+                    ->extraHeaderAttributes([ 'style' => "font-size: smaller;color: #00bb00;"])
+                  ->label('عقود سابقة'),
                 TextColumn::make('sul_date')
                     ->action(function (MainArc $record){$this->Do($record->no);})
                     ->tooltip('انقر للعرض')

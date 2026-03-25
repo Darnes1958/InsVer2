@@ -48,7 +48,7 @@ class OverKst extends BaseWidget
             ->defaultPaginationPageOption(5)
             ->paginationPageOptions([5,10,15])
             ->defaultSort('tar_date')
-            ->query(function (over_kst $main){
+            ->query(function (){
                 $main=over_kst::where('no',$this->no);
                 return $main;
             })
@@ -58,7 +58,8 @@ class OverKst extends BaseWidget
                     ->state(fn(Model $record): string=> $record->letters==1?'مرجع':'غيرمرجع')
                     ->color(fn(Model $record): string=> $record->letters==1?'primary':'info')
                     ->size(TextSize::ExtraSmall)
-                    ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">خصم بالفائض&nbsp;&nbsp;</span>')),
+                    ->extraHeaderAttributes([ 'style' => "font-size: smaller;color: #00bb00;"])
+                    ->label('خصم بالفائض'),
                 TextColumn::make('tar_date')
                     ->size(TextSize::ExtraSmall)
                     ->label('التاريخ'),

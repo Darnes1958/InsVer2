@@ -66,10 +66,10 @@
     </div>
     <div >
         <label style="margin-right: 12px;">صدرت من : </label>
-        @if($res->Storename)
+        @if($res->sell_type->value==1)
         <label >{{$res->Storename->st_name}}</label>
         @endif
-        @if($res->Hallname)
+        @if($res->sell_type->value==2)
             <label >{{$res->Hallname->hall_name}}</label>
         @endif
 

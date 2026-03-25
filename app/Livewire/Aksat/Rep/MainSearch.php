@@ -56,7 +56,7 @@ class MainSearch extends BaseWidget
             ->searchPlaceholder('بحث برقم الحساب او الاسم')
             ->queryStringIdentifier('MainSearch')
 
-            ->query(function (main $main){
+            ->query(function (){
               $main=main::query()
                   ->when($this->bank,function ($q){
                       if (!$this->By)
@@ -76,7 +76,8 @@ class MainSearch extends BaseWidget
                   })
                   ->color('primary')
                   ->size(TextSize::ExtraSmall)
-                  ->label(new HtmlString('<span  style="font-size: smaller;">الرقم</span>')),
+                  ->extraHeaderAttributes(['class' => "text-sky-700" , 'style' => "font-size: smaller;"])
+                 ->label('الرقم'),
               TextColumn::make('name')
                   ->searchable()
                   ->action(function (main $record): void{
@@ -91,15 +92,17 @@ class MainSearch extends BaseWidget
                       return $state;
                   })
                   ->size(TextSize::ExtraSmall)
-                  ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">الاسم</span>')),
+                  ->extraHeaderAttributes(['class' => "text-sky-700" , 'style' => "font-size: smaller;"])
+                  ->label('الاسم'),
               TextColumn::make('acc')
                   ->searchable()
                   ->action(function (main $record){
                       $this->Do($record->no,$record->order_no,$record->jeha);
                   })
                   ->size(TextSize::ExtraSmall)
+                  ->extraHeaderAttributes(['class' => "text-sky-700" , 'style' => "font-size: smaller;"])
                   ->color('info')
-                  ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">رقم الحساب</span>')),
+                ->label('رقم الحساب'),
               TextColumn::make('sul')
                   ->action(function (main $record){
                       $this->Do($record->no,$record->order_no,$record->jeha);
@@ -110,7 +113,8 @@ class MainSearch extends BaseWidget
                       thousandsSeparator: ',',
                   )
                     ->size(TextSize::ExtraSmall)
-                  ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">الاجمالي</span>')),
+                  ->extraHeaderAttributes(['class' => "text-sky-700" , 'style' => "font-size: smaller;"])
+              ->label('الاجمالي'),
               TextColumn::make('kst')
                   ->action(function (main $record){
                       $this->Do($record->no,$record->order_no,$record->jeha);
@@ -121,7 +125,8 @@ class MainSearch extends BaseWidget
                       thousandsSeparator: '',
                   )
                     ->size(TextSize::ExtraSmall)
-                    ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">القسط</span>')),
+                  ->extraHeaderAttributes(['class' => "text-sky-700" , 'style' => "font-size: smaller;"])
+                    ->label('القسط'),
             ])
             ;
 

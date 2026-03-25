@@ -30,7 +30,7 @@ class TarKstArc extends BaseWidget
             ->defaultPaginationPageOption(5)
             ->paginationPageOptions([5,10,15])
             ->defaultSort('tar_date')
-            ->query(function (tar_kst $main){
+            ->query(function (){
                 $main=tar_kst::where('no',$this->no);
                 return $main;
             })

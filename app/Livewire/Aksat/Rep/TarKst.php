@@ -39,7 +39,7 @@ class TarKst extends BaseWidget
             ->paginated(function (){
                 return tar_kst::where('no',$this->no)->count()>5;
             })
-            ->query(function (tar_kst $main){
+            ->query(function (){
                 $main=tar_kst::where('no',$this->no);
                 return $main;
             })
@@ -48,7 +48,7 @@ class TarKst extends BaseWidget
                 TextColumn::make('tar_type')
 
                     ->size(TextSize::ExtraSmall)
-                    ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">ترجيع مبالغ&nbsp;&nbsp;</span>')),
+                    ->label('ترجيع مبالغ'),
 
                 TextColumn::make('tar_date')
                     ->size(TextSize::ExtraSmall)

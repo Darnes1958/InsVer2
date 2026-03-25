@@ -21,6 +21,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
@@ -57,19 +58,13 @@ class RepBankAll extends Page implements HasForms,HasTable
             'from'=>$this->from,
         ]);
     }
-    protected function getForms(): array
-    {
-        return array_merge(parent::getForms(), [
-            "bankForm" => $this->makeForm()
-                ->model(bank::class)
-                ->components($this->getbankFormSchema())
-                ->statePath('bankData'),
 
-        ]);
-    }
-    protected function getbankFormSchema(): array
+    protected function bankForm(Schema $schema): Schema
     {
-        return [
+        return $schema
+            ->model(bank::class)
+            ->statePath('bankData')
+        ->components([
             Section::make()
                 ->schema([
                     Radio::make('By')
@@ -96,7 +91,7 @@ class RepBankAll extends Page implements HasForms,HasTable
                         ]),
                 ])
                 ->columns(6)
-        ];
+        ]);
     }
 
 

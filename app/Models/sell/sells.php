@@ -2,6 +2,7 @@
 
 namespace App\Models\sell;
 
+use App\Enums\SellType;
 use App\Models\buy\buy_tran;
 use App\Models\jeha\jeha;
 use App\Models\stores\halls_names;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 
 class sells extends Model
 {
-    use HasFactory;
+    protected $casts=['sell_type'=>SellType::class];
     protected $connection = 'other';
     protected $guarded = [];
     protected $table = 'sells';

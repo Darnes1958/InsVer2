@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages\Aksat\Rep;
 
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Actions;
 use Filament\Support\Enums\Width;
@@ -46,9 +48,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
 
-class Contract extends Page implements HasInfolists
+class Contract extends Page implements HasInfolists,HasForms
 {
-    use InteractsWithInfolists;
+    use InteractsWithInfolists,InteractsWithForms;
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
     protected string $view = 'filament.pages.aksat.rep.contract';
@@ -100,20 +102,7 @@ class Contract extends Page implements HasInfolists
     }
 
 
-  protected function getForms(): array
-  {
-    return array_merge(parent::getForms(), [
-      "searchForm" => $this->makeForm()
-        ->model(Nmain::class)
-        ->components($this->getsearchFormSchema())
-        ->statePath('searchData'),
-        "kstForm" => $this->makeForm()
-            ->model(kst_trans::class)
-            ->components($this->getkstFormSchema())
-            ->statePath('kstData'),
 
-    ]);
-  }
 
   public function chkNo(){
 
@@ -142,9 +131,13 @@ class Contract extends Page implements HasInfolists
       $this->no=null;
   }
 
-  protected function getkstFormSchema(): array
+
+  protected function kstForm(Schema $schema): Schema
   {
-      return [
+      return $schema
+       ->model(kst_trans::class)
+       ->statePath('kstData')
+       ->components([
           Section::make()
            ->schema([
                Checkbox::make('WithKsm')
@@ -270,11 +263,14 @@ class Contract extends Page implements HasInfolists
 
            ])
           ->columns(4)
-      ];
+      ]);
   }
-  protected function getsearchFormSchema(): array
+  protected function searchForm(Schema $schema): Schema
   {
-    return [
+    return $schema
+      ->model(Nmain::class)
+      ->statePath('searchData')
+      ->components([
       Section::make()
        ->schema([
          TextInput::make('no')
@@ -452,10 +448,7 @@ class Contract extends Page implements HasInfolists
        ])
        ->columns(12)
        ->extraAttributes(['class' => 'flush'])
-
-
-
-    ];
+    ]);
   }
   public function mainInfolist(Schema $schema): Schema
     {

@@ -31,7 +31,7 @@ class Cont extends BaseWidget
 
             ->paginated(false)
             ->defaultSort('sul_date')
-            ->query(function (main $main){
+            ->query(function (){
                 $main=main::where('jeha',$this->jeha)->where("no",'!=',$this->no);
                 return $main;
             })
@@ -42,12 +42,13 @@ class Cont extends BaseWidget
                     ->action(function (main $record){$this->Do($record->no);})
                     ->tooltip('انقر للعرض')
                     ->size(TextSize::ExtraSmall)
-                    ->label(new HtmlString('<span style="font-size: smaller;color: #00bb00">عقود قائمة&nbsp;&nbsp;</span>')),
+                    ->extraHeaderAttributes([ 'style' => "font-size: smaller;color: #00bb00;"])
+                    ->label('عقود قائمة'),
                 TextColumn::make('sul_date')
                     ->action(function (main $record){$this->Do($record->no);})
                     ->tooltip('انقر للعرض')
                     ->size(TextSize::ExtraSmall)
-                    ->label('التاريخ'),
+                    ->label('التاريخ '),
 
                 TextColumn::make('sul')
                     ->size(TextSize::ExtraSmall)

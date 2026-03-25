@@ -63,7 +63,7 @@ class KstTran extends BaseWidget
             ->defaultPaginationPageOption(12)
             ->paginationPageOptions([5,12,15,50,'all'])
             ->defaultSort('ser')
-            ->query(function (kst_trans $main){
+            ->query(function (){
                 $main=kst_trans::where('no',$this->no)
                 ->when($this->WithKsm,function ($query){
                     return $query->where('ksm','!=',0);

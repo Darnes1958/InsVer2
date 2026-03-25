@@ -2,17 +2,24 @@
 
 namespace App\Filament\Resources\Sells\Tables;
 
+use App\Enums\SellType;
 use App\Livewire\Traits\PublicTrait;
 use App\Models\buy\buys;
 use App\Models\Customer;
 use App\Models\jeha\jeha;
 use App\Models\sell\sells;
+use App\Models\stores\halls;
+use App\Models\stores\halls_names;
+use App\Models\stores\stores_names;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -55,13 +62,55 @@ class SellsTable
                 TextColumn::make('not_cash')->summarize(Sum::make()->label('')->numeric('2','.',','))
                     ->label('الباقي'),
                 TextColumn::make('notes')
-                    ->label('ملاحظات'),
+                    ->state(function (sells $record){
+                        if ($record->sell_type==SellType::مخزن)
+                            return stores_names::find($record->place_no)->st_name;
+                        else return halls_names::find($record->place_no)->hall_name;
+                    })
+                    ->label('مكان البيع'),
             ])
             ->filters([
+
                 SelectFilter::make('jeha')
                     ->options(jeha::all()->pluck('jeha_name', 'jeha_no'))
                     ->searchable()
                     ->label('جهة معين'),
+                Filter::make('place_no')
+                 ->schema([
+                     Radio::make('sell_type')
+                      ->label('مخزن / صالة')
+                      ->default(3)
+                         ->live()
+                      ->options(SellType::class),
+                     Select::make('st_no')
+                         ->options(stores_names::all()->pluck('st_name', 'st_no'))
+                      ->searchable()
+                      ->visible(fn(Get $get)=>$get('sell_type')==SellType::مخزن)
+                      ->label('المخزن')
+                      ->preload(),
+
+                     Select::make('hall_no')
+                         ->options(halls_names::all()->pluck('hall_name', 'hall_no'))
+
+                         ->searchable()
+                         ->visible(fn(Get $get)=>$get('sell_type')==SellType::صالة)
+                         ->label('الصالة')
+                         ->preload()
+                 ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when($data['sell_type']!=3,
+                                fn(Builder $query): Builder => $query->where('sell_type',  $data['sell_type'])
+                            )
+                            ->when(
+                                $data['sell_type']==1,
+                                fn (Builder $query): Builder => $query->where('place_no', $data['st_no']),
+                            )
+                            ->when(
+                                $data['sell_type']==2,
+                                fn (Builder $query): Builder => $query->where('place_no',  $data['hall_no']),
+                            );
+                    }),
                 Filter::make('order_date')
                     ->schema([
                         DatePicker::make('Date1')

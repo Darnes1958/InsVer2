@@ -31,7 +31,7 @@ class OverKstArc extends BaseWidget
             ->defaultPaginationPageOption(5)
             ->paginationPageOptions([5,10,15])
             ->defaultSort('tar_date')
-            ->query(function (over_kst_a $main){
+            ->query(function (){
                 $main=over_kst_a::where('no',$this->no);
                 return $main;
             })

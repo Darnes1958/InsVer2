@@ -30,7 +30,7 @@ class KstTranArc extends BaseWidget
             ->defaultPaginationPageOption(12)
             ->paginationPageOptions([5,12,15,50])
             ->defaultSort('ser')
-            ->query(function (TransArc $main){
+            ->query(function (){
                 $main=TransArc::where('no',$this->no);
                 return $main;
             })
@@ -38,7 +38,7 @@ class KstTranArc extends BaseWidget
             ->columns([
                 TextColumn::make('ser')
                     ->action(function(kst_trans $record){
-                        info($record->no);
+                        return true;
                     })
                     ->size(TextSize::ExtraSmall)
                     ->color('primary')

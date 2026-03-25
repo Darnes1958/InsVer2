@@ -24,7 +24,7 @@ class MainItemArc extends BaseWidget
         return $table
             ->paginated(false)
             ->emptyStateHeading('لا توجد بيانات')
-            ->query(function (sell_tran $main){
+            ->query(function (){
                 $main=sell_tran::where('order_no',$this->order_no);
                 return $main;
             })
@@ -32,7 +32,8 @@ class MainItemArc extends BaseWidget
                 TextColumn::make('item_no')
                     ->color('primary')
                     ->size(TextSize::ExtraSmall)
-                    ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">رقم الصنف</span>')),
+                    ->extraHeaderAttributes(['class' => "text-sky-700" , 'style' => "font-size: smaller;"])
+                ->label('رقم الصنف'),
                 TextColumn::make('item.item_name')
                     ->size(TextSize::ExtraSmall)
                     ->limit(25)
@@ -43,7 +44,8 @@ class MainItemArc extends BaseWidget
                         }
                         return $state;
                     })
-                    ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">اسم الصنف</span>')),
+                    ->extraHeaderAttributes(['class' => "text-sky-700" , 'style' => "font-size: smaller;"])
+                  ->label('اسم الصنف'),
 
                 TextColumn::make('quant')
                     ->numeric(
@@ -52,7 +54,8 @@ class MainItemArc extends BaseWidget
                         thousandsSeparator: '',
                     )
                     ->size(TextSize::ExtraSmall)
-                    ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">الكمية</span>')),
+                    ->extraHeaderAttributes(['class' => "text-sky-700" , 'style' => "font-size: smaller;"])
+                  ->label('الكمية'),
                 TextColumn::make('price')
                     ->numeric(
                         decimalPlaces: 2,
@@ -60,6 +63,7 @@ class MainItemArc extends BaseWidget
                         thousandsSeparator: ',',
                     )
                     ->size(TextSize::ExtraSmall)
-                    ->label(new HtmlString('<span class="text-sky-700 " style="font-size: smaller;">السعر</span>')),
+                    ->extraHeaderAttributes(['class' => "text-sky-700" , 'style' => "font-size: smaller;"])
+                 ->label('السعر'),
             ]);
     }}
