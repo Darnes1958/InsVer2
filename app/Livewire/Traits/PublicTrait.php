@@ -72,7 +72,7 @@ trait PublicTrait {
                 $shot->noSandbox()
                     ->setChromePath(Setting::first()->exePath);
             })
-            ->margins(10, 60, 40, 10, Unit::Pixel)
+            ->margins(20, 40, 40, 20, Unit::Pixel)
             ->save(Auth::user()->company.'/invoice-2023-04-10.pdf');
         return public_path().'/'.Auth::user()->company.'/invoice-2023-04-10.pdf';
 
