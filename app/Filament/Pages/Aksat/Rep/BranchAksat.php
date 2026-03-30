@@ -12,6 +12,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -32,6 +33,7 @@ class BranchAksat extends Page implements HasForms,HasTable
     public $Date1;
     public $Date2;
     public $taj_id;
+
 
    public function getTableRecordKey(Model|array $record): string
    {
@@ -79,13 +81,16 @@ class BranchAksat extends Page implements HasForms,HasTable
                         [$this->taj_id,$this->Date1,$this->Date2,$this->taj_id,$this->Date1,$this->Date2]);
             })
             ->defaultKeySort(false)
+
             ->columns([
                 TextColumn::make('hall_name')
                     ->label('الفرع'),
                 TextColumn::make('ksmValue')
+                    ->summarize(Sum::make()->label('')->numeric(2,'.',','))
                     ->numeric(2,'.',',')
                     ->label('اجمالي الاقساط المخصومة'),
                 TextColumn::make('ksmCount')
+                    ->summarize(Sum::make()->label('')->numeric(0,'.',','))
                     ->numeric(0,'',',')
                     ->label('عدد الاقساط المخصومة'),
             ]);

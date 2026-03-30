@@ -58,8 +58,7 @@ class RepPrices extends Page  implements HasForms
                  ->options(items::where('raseed','>',0)->pluck('item_name','item_no'))
                  ->afterStateUpdated(function ($state,Set $set) {
                      $this->item_no = $state;
-                     info($state);
-                     info(items::find($state)->price_sell);
+
 
                      $set('price_sell',items::find($state)->price_sell);
                  }),
