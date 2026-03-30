@@ -3,9 +3,14 @@
 namespace App\Filament\Pages\Aksat\Rep;
 
 use App\Enums\BankTaj;
+use App\Livewire\Traits\PublicTrait;
 use App\Models\aksat\main_sells_bank_view;
 use App\Models\bank\BankTajmeehy;
+use App\Models\masr\MasCenters;
+use App\Models\masr\MasTypeDetails;
+use App\Models\masr\MasTypes;
 use App\Models\stores\halls_names;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -20,10 +25,13 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 
 class BranchAksat extends Page implements HasForms,HasTable
 {
+
     use InteractsWithForms,InteractsWithTable;
+    use PublicTrait;
     protected string $view = 'filament.pages.aksat.rep.branch-aksat';
 
     protected ?string $heading='تقرير بالأقساط المحصلة خلال فترة حسب الفروع';
@@ -96,5 +104,29 @@ class BranchAksat extends Page implements HasForms,HasTable
             ]);
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('print')
+                ->disabled(fn()=> !$this->taj_id)
+                ->label('طباعة')
+                ->icon('heroicon-o-printer')
+                ->color('blue')
+                ->action(function (){
 
+                    $arr=[];
+
+                    $TajName=BankTajmeehy::find($this->taj_id)->first()->TajName;
+                    $arr['TajName']=$TajName;
+
+                    $date='';
+                    if ($this->Date1) $date='من تاريخ '.$this->Date1;
+                    if ($this->Date2) $date=$date.' إلي تاريخ '.$this->Date2;
+                    $arr['date']=$date;
+
+                    return Response::download(self::ret_spatie($this->getTableQueryForExport()->get(),
+                        'PrnView.aksat.branch-aksat',$arr), 'filename.pdf', self::ret_spatie_header());
+                }),
+        ];
+    }
 }
