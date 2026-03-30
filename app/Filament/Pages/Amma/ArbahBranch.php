@@ -40,7 +40,7 @@ class ArbahBranch extends Page  implements HasForms,HasTable
 
     public function getTableRecordKey(Model|array $record): string
     {
-     return $record->place_name;
+     return $record->place_name.$record->TajName;
     }
     public function mount(): void {
         $date = now();
@@ -78,6 +78,7 @@ class ArbahBranch extends Page  implements HasForms,HasTable
                  ->groupBy('place_name','TajName')
                  ->orderBy('place_name')   ;
                             })
+            ->defaultKeySort(false)
             ->columns([
                 TextColumn::make('place_name')
                  ->label('نقطة البيع'),
