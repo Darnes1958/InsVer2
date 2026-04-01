@@ -3,7 +3,10 @@
 namespace App\Filament\Resources\CusTrans\Tables;
 
 use App\Enums\CusValType;
+use App\Models\Account;
 use App\Models\Customer;
+use App\Models\OurCompany;
+use App\Models\Tasneeh;
 use Carbon\Carbon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -23,10 +26,15 @@ class CusTransTable
     {
         return $table
             ->columns([
-                TextColumn::make('transable_type')->sortable()->searchable(),
-                TextColumn::make('transable_id')->sortable()->searchable(),
+                TextColumn::make('transable_type')->sortable(),
+                TextColumn::make('transable_id')->sortable(),
                 TextColumn::make('transable.Company')
-                 ->searchable(),
+
+                ->searchable(query: function (Builder $query, string $search): Builder {
+                    return $query->whereHasMorph('transable', [Customer::class, Account::class, Tasneeh::class,OurCompany::class], function (Builder $query) use ($search) {
+                        $query->where('Company', 'like', "%{$search}%");
+                    });
+                }),
                 TextColumn::make('TransDate')
                     ->date()
                     ->sortable(),
