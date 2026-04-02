@@ -12,6 +12,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\MorphToSelect;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -28,13 +29,7 @@ class CusTransTable
             ->columns([
                 TextColumn::make('transable_type')->sortable(),
                 TextColumn::make('transable_id')->sortable(),
-                TextColumn::make('transable.Company')
-
-                ->searchable(query: function (Builder $query, string $search): Builder {
-                    return $query->whereHasMorph('transable', [Customer::class, Account::class, Tasneeh::class,OurCompany::class], function (Builder $query) use ($search) {
-                        $query->where('Company', 'like', "%{$search}%");
-                    });
-                }),
+                TextColumn::make('transable.Company'),
                 TextColumn::make('TransDate')
                     ->date()
                     ->sortable(),
@@ -85,7 +80,29 @@ class CusTransTable
                                 $data['Date2'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('TransDate', '<=', $date),
                             );
-                    })
+                    }),
+                Filter::make('Company')
+                 ->schema([
+                     MorphToSelect::make('transable')
+                         ->types([
+                             MorphToSelect\Type::make(Customer::class)
+                                 ->titleAttribute('Company'),
+                             MorphToSelect\Type::make(OurCompany::class)
+                                 ->titleAttribute('Company'),
+                             MorphToSelect\Type::make(Account::class)
+                                 ->titleAttribute('Company'),
+                             MorphToSelect\Type::make(Tasneeh::class)
+                                 ->titleAttribute('Company'),
+
+                         ])
+                 ])
+                 ->query(function (Builder $query, array $data): Builder {
+                  return $query
+                      ->when($data['transable_type'],
+                      fn(Builder $query): Builder => $query->where('transable_type', $data['transable_type'])
+                                                                 ->where('transable_id', $data['transable_id']));
+
+               })
             ])
             ->recordActions([
                 EditAction::make(),
