@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
@@ -20,9 +21,17 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\DB;
+use UnitEnum;
 
 class CustomerResource extends Resource
 {
+   //public static function getNavigationGroup(): string|UnitEnum|null
+   //{
+   //    return 'Setting';
+   //}
+
+
+    protected static ?string $navigationLabel='First Verion';
     public static function shouldRegisterNavigation(): bool
     {
         return  auth()->user()->id==1;
@@ -47,6 +56,7 @@ class CustomerResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->required(),
                 TextInput::make('message'),
+                TextInput::make('info'),
             ]);
 
     }
@@ -68,6 +78,8 @@ class CustomerResource extends Resource
                     ->sortable(),
                 TextColumn::make('message')
                     ->sortable(),
+                TextColumn::make('info')
+                    ->searchable(),
             ])
             ->filters([
                 //
@@ -77,18 +89,18 @@ class CustomerResource extends Resource
                 DeleteAction::make()->requiresConfirmation()
                 ->visible(function (Customer $record) {
                     $query = " IF EXISTS
-       ( SELECT name FROM master.dbo.sysdatabases  WHERE name = ?  )
-          BEGIN
-            SELECT 1 AS Message
-          END
-        ELSE
-         BEGIN
-            SELECT 0 AS Message
-         END
-                               ";
+                           ( SELECT name FROM master.dbo.sysdatabases  WHERE name = ?  )
+                              BEGIN
+                                SELECT 1 AS Message
+                              END
+                            ELSE
+                             BEGIN
+                                SELECT 0 AS Message
+                             END
+                                                   ";
 
                     $db = DB::select($query, [$record->Company]);
-info($db);
+
                     return $db[0]->Message=='0';
                 }),
             ])
