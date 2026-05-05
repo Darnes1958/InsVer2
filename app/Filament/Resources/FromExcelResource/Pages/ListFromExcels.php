@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\FromExcelResource\Pages;
 
+use App\Models\AhmedFromexcel;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Utilities\Get;
@@ -89,7 +90,15 @@ class ListFromExcels extends ListRecords
                 ])
                 ->action(function (array $data){
                     FromExcel::truncate();
+                    AhmedFromexcel::truncate();
                     User::find(Auth::id())->update(['empno'=>$data['bank'],'IsAdmin'=>$data['taj']]);
+                    if (Auth::user()->company=='BokreahAli')
+                    {
+                        if ($data['taj']==7) $taj=1;
+                        if ($data['taj']==3) $taj=8;
+                        DB::connection('InsFila')->table('users')->update(['taj'=>$taj]);
+
+                    }
 
                 }),
 

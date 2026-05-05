@@ -2,6 +2,9 @@
 
 namespace App\Imports;
 
+use App\Models\AhmedFromexcel;
+use App\Models\aksat\main;
+use App\Models\aksat\MainArc;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ExcelSeting;
 use App\Models\FromExcel;
@@ -22,6 +25,7 @@ class FromExcelImport implements ToModel, WithHeadingRow
      */
     public function model(array $row)
     {
+        $taj_id=Auth::user()->IsAdmin;
 
         $bank=ExcelSeting::find(Auth::user()->empno);
       if (
@@ -47,15 +51,42 @@ class FromExcelImport implements ToModel, WithHeadingRow
       $ksm=$row[$bank->ksm];
       if (Auth::user()->company=='Boshlak' || Auth::user()->company=='Boshlak5')  $ksm -=(.05*$ksm);
 
+      if (Auth::user()->company=='BokreahAli' &&
+          ($taj_id==7 || $taj_id==3)
+          &&
+           !main::where('taj_id',$taj_id)
+              ->where('acc',$row[$bank->acc])
+              ->where('kst',$row[$bank->ksm])->first() &&
+          !MainArc::where('taj_id',$taj_id)
+              ->where('acc',$row[$bank->acc])
+              ->where('kst',$row[$bank->ksm])->first()
+      )
+      {
 
-      $rec= FromExcel::on(auth()->user()->company)->create(
+              if ($taj_id==7) $taj=1;
+              if ($taj_id==3) $taj=8;
+
+              $rec= AhmedFromexcel::create(
+                  [
+                      'name' => $row[$bank->name],
+                      'acc' => $row[$bank->acc],
+                      'ksm' => $ksm,
+                      'ksm_date' => $date,
+                      'taj_id' =>$taj,
+                  ]
+              );
+
+
+      } else
+
+      $rec= FromExcel::create(
         [
           'name' => $row[$bank->name],
           'acc' => $row[$bank->acc],
           'ksm' => $ksm,
           'ksm_date' =>$date,
           'bank' => 0,
-          'hafitha_tajmeehy' => Auth::user()->IsAdmin,
+          'hafitha_tajmeehy' => $taj_id,
           'h_no' => 1,
         ]
       );
