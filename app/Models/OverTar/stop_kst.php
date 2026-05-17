@@ -2,8 +2,10 @@
 
 namespace App\Models\OverTar;
 
+use App\Models\bank\bank;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
 class stop_kst extends Model
@@ -15,6 +17,10 @@ class stop_kst extends Model
   protected $primaryKey ='rec_no';
 
   public $timestamps = false;
+
+  public function  bankname() :BelongsTo {
+      return $this->belongsTo(Bank::class, 'bank', 'bank_no');
+  }
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

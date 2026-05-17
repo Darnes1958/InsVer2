@@ -4,6 +4,7 @@ namespace App\Providers;
 
 
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -53,6 +54,7 @@ class AppServiceProvider extends ServiceProvider
             'blue' =>  Color::Blue,
             'gray' =>  Color::Gray,
         ]);
+        DeleteAction::configureUsing(fn (DeleteAction $action) => $action->modalHeading('حذف السجل'));
         Table::configureUsing(fn(Table $table) => $table
             ->defaultNumberLocale('nl')
             ->pluralModelLabel('الصفحات')
