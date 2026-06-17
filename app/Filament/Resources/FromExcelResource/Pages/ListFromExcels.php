@@ -92,13 +92,7 @@ class ListFromExcels extends ListRecords
                     FromExcel::truncate();
                     AhmedFromexcel::truncate();
                     User::find(Auth::id())->update(['empno'=>$data['bank'],'IsAdmin'=>$data['taj']]);
-                    if (Auth::user()->company=='BokreahAli' && ($data['taj']==7 || $data['taj']==3) )
-                    {
-                        if ($data['taj']==7) $taj=1;
-                        if ($data['taj']==3) $taj=8;
-                        DB::connection('InsFila')->table('users')->update(['taj'=>$taj]);
 
-                    }
 
                 }),
 

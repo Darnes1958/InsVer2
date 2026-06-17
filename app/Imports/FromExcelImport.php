@@ -51,33 +51,6 @@ class FromExcelImport implements ToModel, WithHeadingRow
       $ksm=$row[$bank->ksm];
       if (Auth::user()->company=='Boshlak' || Auth::user()->company=='Boshlak5')  $ksm -=(.05*$ksm);
 
-      if (Auth::user()->company=='BokreahAli' &&
-          ($taj_id==7 || $taj_id==3)
-          &&
-           !main::where('taj_id',$taj_id)
-              ->where('acc',$row[$bank->acc])
-              ->where('kst',$row[$bank->ksm])->first() &&
-          !MainArc::where('taj_id',$taj_id)
-              ->where('acc',$row[$bank->acc])
-              ->where('kst',$row[$bank->ksm])->first()
-      )
-      {
-
-              if ($taj_id==7) $taj=1;
-              if ($taj_id==3) $taj=8;
-
-              $rec= AhmedFromexcel::create(
-                  [
-                      'name' => $row[$bank->name],
-                      'acc' => $row[$bank->acc],
-                      'ksm' => $ksm,
-                      'ksm_date' => $date,
-                      'taj_id' =>$taj,
-                  ]
-              );
-
-
-      } else
 
       $rec= FromExcel::create(
         [
