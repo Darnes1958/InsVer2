@@ -20,8 +20,8 @@ class KaemaModelImport implements ToModel, WithHeadingRow
   public function model(array $row)
   {
 
-    if (!isset($row['kym_alkst']) || !isset($row['asm_alzbon']) || !isset($row['hsab_algdyd_lzbon'])
-      || !isset($row['slahy_alaakd'])) {
+    if (!isset($row['قيمة القسط']) || !isset($row['اسم الزبون']) || !isset($row['حساب الجديد لزبون'])
+      || !isset($row['صلاحية العقد'])) {
       return null;
     }
 
