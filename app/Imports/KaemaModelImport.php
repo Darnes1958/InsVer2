@@ -28,12 +28,12 @@ class KaemaModelImport implements ToModel, WithHeadingRow
      else
        $rec= Kaema::create(
          [
-           'name' => $row['asm_alzbon'],
-           'acc' => $row['hsab_algdyd_lzbon'],
-           'kst' => $row['kym_alkst'],
-           'sul_date' => Date::excelToDateTimeObject($row['slahy_alaakd']),
-           'bankcode' => $row['fraa_alzbon'],
-           'no_bank' => $row['rkm_alaakd'],
+           'name' => $row['اسم الزبون'],
+           'acc' => $row['حساب الجديد لزبون'],
+           'kst' => $row['قيمة القسط'],
+           'sul_date' => Date::excelToDateTimeObject($row['صلاحية العقد']),
+           'bankcode' => $row['فرع الزبون'],
+           'no_bank' => $row['رقم العقد'],
          ]
        );
 
